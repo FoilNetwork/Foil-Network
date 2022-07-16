@@ -147,6 +147,8 @@ public abstract class Transaction implements ExplorerJsonLine, Jsonable {
     public static final int INVALID_CLAIM_DEBT_CREATOR = 61;
 
     public static final int ORDER_ALREADY_COMPLETED = 65;
+    public static final int ORDER_AMOUNT_HAVE_SO_SMALL = 66;
+    public static final int ORDER_AMOUNT_WANT_SO_SMALL = 67;
 
     public static final int INVALID_AWARD = 81;
     public static final int INVALID_MAX_AWARD_COUNT = 82;
@@ -164,6 +166,8 @@ public abstract class Transaction implements ExplorerJsonLine, Jsonable {
     public static final int NOT_ENOUGH_ERA_USE_100 = 106;
     public static final int NOT_ENOUGH_ERA_OWN_1000 = 107;
     public static final int NOT_ENOUGH_ERA_USE_1000 = 108;
+    public static final int NOT_ENOUGH_ERA_OWN_10000 = 109;
+    public static final int NOT_ENOUGH_ERA_USE_10000 = 110;
 
     public static final int INVALID_BACKWARD_ACTION = 117;
     public static final int INVALID_PERSONALIZY_ANOTHER_PERSON = 118;
