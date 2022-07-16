@@ -1,16 +1,16 @@
-# Erachain Blockchain platform
+# FOIL Network Blockchain platform
 
-## Erachain Open Source Server
+## FOIL Network Open Source Server
 
-Erachain software is a feature rich blockchain platform with built-in functions and dApps. This is the canonical source
-of ErachainBP where all development takes place.
+Foil-Network software is a feature rich blockchain platform with built-in functions and dApps. This is the canonical source
+of Foil-Network where all development takes place.
 
 Keep up with the latest news and articles, and find out all about events happening on the
-Erachain [website](https://erachain.org/).
+Foil-Network [website](https://foil.network/).
 
 ## Software stack
 
-ErachainBP is a Java application and supported by all operation systems.
+Foil-Network is a Java application and supported by all operation systems.
 
 ## ⛓ Links
 
@@ -41,7 +41,7 @@ https://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html#j
 
 ### Start Application
 
-1. select Application, set org.erachain.Start
+1. select Application, set org.foil.Start
 2. Set Working Directory for new Application to \ERA
 3. select ERA_main module
 
@@ -100,7 +100,7 @@ platform ([Linux](https://www.scala-sbt.org/1.0/docs/Installing-sbt-on-Linux.htm
 *2. Clone this repo*
 
 ```bash
-git clone https://github.com/erachain/Erachain
+git clone https://github.com/FoilNetwork/Foil-Network
 ```
 
 *3. Compile and run tests*
@@ -139,7 +139,7 @@ sudo dpkg -i node/target/*.deb
 
 ## Windows, Mac and Linux
 
-Run erachain.jar file.
+Run foilchain.jar file.
 
 If your node will only used for forging then run it with the keys:
 -nodatawallet -pass=[PASSWORD]  
@@ -168,15 +168,15 @@ Disable journaling on NTFS command line: fsutil usn deletejournal /d c:
 
 # 🤝 Contributing
 
-Erachain is an open source project and we are very happy to accept community contributions. Please refer
-to [Contributing to GitHub page](https://github.com/erachain/Erachain/blob/master/CONTRIBUTING.md) for more details.
+Foil-Network is an open source project and we are very happy to accept community contributions. Please refer
+to [Contributing to GitHub page](https://github.com/FoilNetwork/Foil-Network/blob/master/CONTRIBUTING.md) for more details.
 
 For major changes, please open an issue first to discuss what you would like to change. Please make sure to update tests
 as appropriate.
 
 # Getting help
 
-If something isn't clear, feel free to ask by email <support@erachain.org> or [Discord](https://discord.gg/vcDbPHyZ).
+If something isn't clear, feel free to ask by email <support@foil.network> or [Discord](https://discord.gg/vcDbPHyZ).
 
 
 # ✨ Appendix: Extra-mining, extra-stacking and extra-inviting
@@ -264,8 +264,8 @@ but is set in the list `ASSET_TRANSFER_PERCENTAGE`, then by default half of the 
 # Hiring
 
 We are hiring developers, support people, and production engineers all the time. If you're interested, please write to
-us <info@erachain.org>
+us <info@foil.network>
 
 # 📝 Licence
 
-ErachainBP server is licensed under the aGPL v3.
+Foil-Network server is licensed under the aGPL v3.
