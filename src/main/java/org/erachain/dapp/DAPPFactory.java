@@ -13,6 +13,7 @@ import org.erachain.core.transaction.TransactionAmount;
 import org.erachain.dapp.epoch.DogePlanet;
 import org.erachain.dapp.epoch.LeafFall;
 import org.erachain.dapp.epoch.Refi;
+import org.erachain.dapp.epoch.Voucher;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGathering_01DAPP;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGatheringDAPP;
 import org.erachain.dapp.epoch.shibaverse.ShibaVerseDAPP;
@@ -42,6 +43,7 @@ public abstract class DAPPFactory {
         MemeTheGatheringDAPP.setDAPPFactory(stocks);
         MemeTheGathering_01DAPP.setDAPPFactory(stocks);
         Refi.setDAPPFactory(stocks);
+        Voucher.setDAPPFactory(stocks);
 
     }
 
@@ -129,6 +131,8 @@ public abstract class DAPPFactory {
                 return MemeTheGatheringDAPP.make(txSend, dataStr);
             case MemeTheGathering_01DAPP.ID:
                 return MemeTheGathering_01DAPP.make(txSend, dataStr);
+            case Voucher.ID:
+                return Voucher.make(txSend, dataStr);
         }
 
         return null;
