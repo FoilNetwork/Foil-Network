@@ -58,14 +58,24 @@ public class Voucher extends EpochDAPPjson {
 
 
     ///////// COMMANDS
-    private boolean mint(DCSet dcSet, Block block, RSend rSend, boolean asOrphan) {
+    private boolean mint(DCSet dcSet, Block block, RSend commandTX, boolean asOrphan) {
 
-        Long refDB = rSend.getDBRef();
+        Long refDB = commandTX.getDBRef();
         Long assetKey;
+        ItemAssetMap assetMap = dcSet.getItemAssetMap();
 
         if (asOrphan) {
-            Object[] result = removeState(dcSet, refDB);
-            assetKey = (Long) result[0];
+            // Object[] result = removeState(dcSet, refDB);
+            // assetKey = (Long)result[0];
+            assetKey = assetMap.getLastKey();
+
+            // RESET AMOUNT
+            stock.changeBalance(dcSet, true, false, assetKey,
+                    BigDecimal.ONE, false, false, true, 0);
+
+            transfer(dcSet, null, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, assetKey, true, null, null);
+
+            // DELETE FROM BLOCKCHAIN DATABASE
             dcSet.getItemAssetMap().decrementDelete(assetKey);
 
         } else {
@@ -101,14 +111,22 @@ public class Voucher extends EpochDAPPjson {
                         stock, name, ("/apiasset/icon/" + protoAssetKey).getBytes(StandardCharsets.UTF_8),
                         ("/apiasset/image/" + protoAssetKey).getBytes(StandardCharsets.UTF_8),
                         description, AssetCls.AS_NON_FUNGIBLE);
-                voucherAsset.setReference(rSend.getSignature(), rSend.getDBRef());
+                voucherAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
                 //INSERT INTO BLOCKCHAIN DATABASE
-                assetKey = dcSet.getItemAssetMap().incrementPut(voucherAsset);
-                status = "done " + assetKey;
+                assetKey = assetMap.incrementPut(voucherAsset);
+
+                // SET AMOUNT
+                stock.changeBalance(dcSet, false, false, assetKey,
+                        BigDecimal.ONE, false, false, true, 0);
+
+                // TRANSFER ASSET
+                transfer(dcSet, block, commandTX, stock, recipient, BigDecimal.ONE, assetKey, false, null, "mint");
 
                 // store results for orphan
-                putState(dcSet, refDB, new Object[]{assetKey});
+                /// putState(dcSet, refDB, new Object[]{assetKey});
+
+                status = "done " + assetKey;
 
             } catch (Exception e) {
                 fail(e.getMessage());
