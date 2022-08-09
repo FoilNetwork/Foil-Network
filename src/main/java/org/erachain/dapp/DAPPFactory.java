@@ -78,7 +78,7 @@ public abstract class DAPPFactory {
 
         RSend txSend = (RSend) transaction;
 
-        if (false && BlockChain.TEST_MODE) {
+        if (BlockChain.TEST_MODE) {
             Refi dapp = Refi.tryMakeJob(txSend);
             if (dapp != null)
                 return dapp;
@@ -86,7 +86,8 @@ public abstract class DAPPFactory {
 
         if (!txSend.getRecipient().isDAppOwned()) {
             ///// OLD VERSION
-            if (txSend.balancePosition() == TransactionAmount.ACTION_SPEND && txSend.hasAmount()
+            if (BlockChain.TEST_MODE &&
+                    txSend.balancePosition() == TransactionAmount.ACTION_SPEND && txSend.hasAmount()
             ) {
                 if (txSend.hasPacket()) {
 
