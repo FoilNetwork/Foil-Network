@@ -226,7 +226,7 @@ public class BlockChain {
      * Если задан то это режим синхронизации со старым протоколом - значит нам нельзя генерить блоки и транзакции
      * и вести себя тихо - ничего не посылать никуда - чтобы не забанили
      */
-    public static int ALL_VALID_BEFORE = DEMO_MODE ? 66817 : 788640; // see in sidePROTOCOL.json as 'allValidBefore'
+    public static int ALL_VALID_BEFORE = DEMO_MODE ? 66817 : TEST_MODE? 0 : 788640; // see in sidePROTOCOL.json as 'allValidBefore'
     public static final int WIN_VAL_ALL_VALID = 0;
     public static final int ALL_BALANCES_OK_TO = DEMO_MODE? 0 : CLONE_MODE? 137687 : 0;
     public static final int CANCEL_ORDERS_ALL_VALID = DEMO_MODE? 0 : CLONE_MODE? 53495 : 0;

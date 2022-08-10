@@ -111,9 +111,9 @@ public class Voucher extends EpochDAPPjson {
 
                 name += " " + amountStr;
                 if (coins.equals("USD"))
-                    name += " $";
+                    name += "$";
                 else
-                    name += " " + coins + " ";
+                    name += " " + coins;
 
                 //JSONArray array = new JSONArray();
                 //array.add(coins); array.add(amount);
