@@ -2,6 +2,7 @@ package org.erachain.dapp.epoch;
 
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
+import org.erachain.core.BlockChain;
 import org.erachain.core.account.Account;
 import org.erachain.core.account.PublicKeyAccount;
 import org.erachain.core.block.Block;
@@ -13,6 +14,7 @@ import org.erachain.core.transaction.RSend;
 import org.erachain.core.transaction.Transaction;
 import org.erachain.dapp.EpochDAPPjson;
 import org.erachain.datachain.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.mapdb.Fun.Tuple2;
 
@@ -21,7 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * ["mint","DOGE", 100]
+ * Send public mail to APPBNt7cZp89L5j47Ud62ZRSiKb1Y9hYjD
+ * Set text: ["mint","DOGE", 100, "7Recipient"]
  */
 public class Voucher extends EpochDAPPjson {
 
@@ -84,11 +87,11 @@ public class Voucher extends EpochDAPPjson {
                 // ["mint", "DOGE", 100, "7sadiuwyer7625346XXX"] - command, coins, amount, recipient
                 status = "";
                 String coins = (String) pars.get(1);
-                BigDecimal amount = new BigDecimal(pars.get(2).toString());
+                String amountStr = pars.get(2).toString();
+                BigDecimal amount = new BigDecimal(amountStr);
                 Account recipient = new Account(pars.get(3).toString());
-                String description = pars.toJSONString();
 
-                String name = "Voucher";
+                String name = "Red envelope";
                 boolean iconAsURL = true;
                 int iconType = 0;
                 boolean imageAsURL = true;
@@ -101,10 +104,20 @@ public class Voucher extends EpochDAPPjson {
                 boolean isUnTransferable = false;
 
                 boolean isAnonimDenied = false;
-                if (coins.equals("DOGE") && amount.compareTo(new BigDecimal("100")) > 0
-                        || coins.equals("USD") && amount.compareTo(new BigDecimal("300")) > 0) {
+                if (coins.equals("DOGE") && amount.compareTo(new BigDecimal("500")) > 0
+                        || coins.equals("USD") && amount.compareTo(new BigDecimal("1000")) > 0) {
                     isAnonimDenied = true;
                 }
+
+                name += " " + amountStr;
+                if (coins.equals("USD"))
+                    name += " $";
+                else
+                    name += " " + coins + " ";
+
+                //JSONArray array = new JSONArray();
+                //array.add(coins); array.add(amount);
+                String description = "Send to " + stock.getAddress() + " for withdraw";
 
                 AssetUnique voucherAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
@@ -155,7 +168,8 @@ public class Voucher extends EpochDAPPjson {
     public boolean process(DCSet dcSet, Block block, Transaction commandTX) {
 
         /// COMMANDS
-        if (COMMAND_MINT.equals(command) && isAdminCommand(commandTX.getCreator()))
+        if (COMMAND_MINT.equals(command)
+                && (BlockChain.TEST_MODE || isAdminCommand(commandTX.getCreator())))
             return mint(dcSet, block, (RSend) commandTX, false);
 
             /// ADMIN COMMANDS
