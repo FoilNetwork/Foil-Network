@@ -31,7 +31,7 @@ public class Voucher extends EpochDAPPjson {
 
     static public final int ID = 99012;
     static public final String NAME = "Voucher dApp";
-    static public final String ASSET_NAME = "Voucher";
+    static public final String ASSET_NAME = "Red envelope";
 
     // APPBNt7cZp89L5j47Ud62ZRSiKb1Y9hYjD
     final public static PublicKeyAccount MAKER = PublicKeyAccount.makeForDApp(crypto.digest(Longs.toByteArray(ID)));
@@ -91,7 +91,7 @@ public class Voucher extends EpochDAPPjson {
                 BigDecimal amount = new BigDecimal(amountStr);
                 Account recipient = new Account(pars.get(3).toString());
 
-                String name = "Red envelope";
+                String name = ASSET_NAME;
                 boolean iconAsURL = true;
                 int iconType = 0;
                 boolean imageAsURL = true;
@@ -112,8 +112,12 @@ public class Voucher extends EpochDAPPjson {
                 name += " " + amountStr;
                 if (coins.equals("USD"))
                     name += "$";
-                else
+                else if (coins.equals("DOGE"))
                     name += " " + coins;
+                else {
+                    fail("wrong coin");
+                    return false;
+                }
 
                 //JSONArray array = new JSONArray();
                 //array.add(coins); array.add(amount);
@@ -151,7 +155,50 @@ public class Voucher extends EpochDAPPjson {
 
     }
 
-    //////////////////// ADMIN PROCCESS
+    private boolean withdraw(DCSet dcSet, Block block, RSend commandTX, boolean asOrphan) {
+
+        AssetCls asset = commandTX.getAsset();
+        String coinsAmo = asset.getName().substring(ASSET_NAME.length()).trim();
+        String[] split = coinsAmo.split(" ");
+        String coins;
+        String amount;
+        if (split.length == 2) {
+            amount = split[0];
+            coins = split[1];
+        } else {
+            amount = coinsAmo.substring(0, coinsAmo.length() - 1);
+            coins = "USD";
+        }
+
+        Long assetKey;
+        if (coins.equals("USD"))
+            assetKey = 1840L;
+        else if(coins.equals("DOGE"))
+            assetKey = 18L;
+        else {
+            fail("wrong coin");
+            return false;
+        }
+
+
+        if (asOrphan) {
+
+            transfer(dcSet, null, commandTX, stock, commandTX.getCreator(), new BigDecimal(amount), assetKey, true, null, null);
+
+        } else {
+
+            // TRANSFER ASSET
+            transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), new BigDecimal(amount), assetKey, false, null, "withdraw");
+
+            status = "done";
+
+        }
+
+        return true;
+
+    }
+
+    //////////////////// ADMIN PROCESS
 
     /// INIT
     private boolean init(DCSet dcSet, Block block, Transaction commandTX, boolean asOrphan) {
@@ -175,6 +222,12 @@ public class Voucher extends EpochDAPPjson {
             /// ADMIN COMMANDS
         else if ("init".equals(command))
             return init(dcSet, block, commandTX, false);
+
+        else {
+            RSend rSend = (RSend) commandTX;
+            if (rSend.getAsset().getMaker().equals(stock))
+                return withdraw(dcSet, block, rSend, false);
+        }
 
         fail("unknown command");
         return false;
