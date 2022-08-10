@@ -30,7 +30,7 @@ public class Voucher extends EpochDAPPjson {
     static public final String NAME = "Voucher dApp";
     static public final String ASSET_NAME = "Voucher";
 
-    // APPBjF5fbGj18aaXKSXemmHConG7JLBiJg
+    // APPBNt7cZp89L5j47Ud62ZRSiKb1Y9hYjD
     final public static PublicKeyAccount MAKER = PublicKeyAccount.makeForDApp(crypto.digest(Longs.toByteArray(ID)));
 
     /**
@@ -81,7 +81,7 @@ public class Voucher extends EpochDAPPjson {
         } else {
 
             try {
-                // ["mint", "DOGE", 100, "7sadiuwyer7625346.."] - command, coins, amount, recipient
+                // ["mint", "DOGE", 100, "7sadiuwyer7625346XXX"] - command, coins, amount, recipient
                 status = "";
                 String coins = (String) pars.get(1);
                 BigDecimal amount = new BigDecimal(pars.get(2).toString());

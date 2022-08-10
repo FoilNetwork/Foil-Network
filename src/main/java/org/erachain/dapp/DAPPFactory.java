@@ -56,7 +56,7 @@ public abstract class DAPPFactory {
      */
     static public DAPP make(Transaction transaction) {
 
-        if (!BlockChain.TEST_MODE || transaction.getBlockHeight() < 386460)
+        if (!BlockChain.TEST_MODE || BlockChain.DEMO_MODE && transaction.getBlockHeight() < 386460)
             return null;
 
         /////////// EVENTS
