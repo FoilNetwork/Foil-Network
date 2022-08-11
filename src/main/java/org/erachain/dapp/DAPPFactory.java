@@ -155,6 +155,10 @@ public abstract class DAPPFactory {
                 return MemeTheGatheringDAPP.NAME;
             case MemeTheGathering_01DAPP.ID:
                 return MemeTheGathering_01DAPP.NAME;
+            case Refi.ID:
+                return Refi.NAME;
+            case Voucher.ID:
+                return Voucher.NAME;
         }
 
         return null;
