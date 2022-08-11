@@ -250,6 +250,12 @@ public class Voucher extends EpochDAPPjson {
         else if ("init".equals(command))
             init(dcSet, null, commandTX, true);
 
+        else {
+            RSend rSend = (RSend) commandTX;
+            if (rSend.getAsset().getMaker().equals(stock))
+                withdraw(dcSet, null, rSend, true);
+        }
+
     }
 
     public static Voucher make(RSend txSend, String dataStr) {
