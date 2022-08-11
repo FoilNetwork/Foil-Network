@@ -13,6 +13,7 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 public abstract class EpochDAPPjson extends EpochDAPP {
 
@@ -41,6 +42,8 @@ public abstract class EpochDAPPjson extends EpochDAPP {
 
             } else
                 command = dataStr;
+
+            command = command.toUpperCase();
 
         } else
             command = "";
