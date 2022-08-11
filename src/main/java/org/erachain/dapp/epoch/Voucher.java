@@ -242,7 +242,8 @@ public class Voucher extends EpochDAPPjson {
     public void orphan(DCSet dcSet, Transaction commandTX) {
 
         /// COMMANDS
-        if (COMMAND_MINT.equals(command) && isAdminCommand(commandTX.getCreator()))
+        if (COMMAND_MINT.equals(command)
+                && (BlockChain.TEST_MODE || isAdminCommand(commandTX.getCreator())))
             mint(dcSet, null, (RSend) commandTX, true);
 
             /// ADMIN COMMANDS

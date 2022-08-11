@@ -33,7 +33,7 @@ ext {
 }
 
 //String versionEra = "4.11.08-${git.head().abbreviatedId}"
-String versionEra = "2022.08.01"
+String versionEra = "2022.08 01"
 archivesBaseName = 'foilnetwork'
 group 'org.erachain'
 //version versionEra
