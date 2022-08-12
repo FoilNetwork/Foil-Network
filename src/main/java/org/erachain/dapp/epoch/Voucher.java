@@ -239,7 +239,7 @@ public class Voucher extends EpochDAPPjson {
     }
 
     @Override
-    public void orphan(DCSet dcSet, Transaction commandTX) {
+    public void orphanBody(DCSet dcSet, Transaction commandTX) {
 
         /// COMMANDS
         if (COMMAND_MINT.equals(command)
