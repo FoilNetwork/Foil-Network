@@ -603,7 +603,7 @@ public class MemeTheGatheringDAPP extends EpochDAPPjson {
         return true;
     }
 
-    //////////////////// ADMIN PROCCESS
+    //////////////////// ADMIN PROCESS
 
     /**
      * Example of command: ["set price", {"1001": {"1": 0.1, "18":"0.01"}}]
@@ -887,12 +887,7 @@ public class MemeTheGatheringDAPP extends EpochDAPPjson {
     }
 
     @Override
-    public void orphan(DCSet dcSet, Transaction commandTX) {
-
-        if (status.startsWith("fail")) {
-            // not processed
-            return;
-        }
+    public void orphanBody(DCSet dcSet, Transaction commandTX) {
 
         if (status.startsWith("wait")) {
             /// WAIT RANDOM FROM FUTURE
