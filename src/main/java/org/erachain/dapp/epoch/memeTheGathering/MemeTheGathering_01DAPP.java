@@ -341,7 +341,7 @@ public class MemeTheGathering_01DAPP extends EpochDAPPjson {
                     fail("Wrong balance position. Need OWN[1]");
                     return false;
                 } else if (block == null) {
-                    fail("wait block");
+                    fail("null block");
                     return false;
                 }
 
@@ -371,14 +371,7 @@ public class MemeTheGathering_01DAPP extends EpochDAPPjson {
     }
 
     @Override
-    public void orphan(DCSet dcSet, Transaction commandTX) {
-
-        if (status.startsWith("wait")) {
-            /// WAIT RANDOM FROM FUTURE
-            dcSet.getTimeTXWaitMap().remove(commandTX.getDBRef());
-
-        }
-
+    public void orphanBody(DCSet dcSet, Transaction commandTX) {
     }
 
     @Override
