@@ -1047,6 +1047,12 @@ public class Controller extends Observable {
             return;
         this.isStopping = true;
 
+        if (transactionsPool == null) {
+            // иногла крах запуска - не инициализирует даже транзакции и выход после этого - просто выход и все
+            LOGGER.info("Core craching... Please clear databases and restart");
+            System.exit(-1);
+        }
+
         if (this.connectTimer != null)
             this.connectTimer.cancel();
 
