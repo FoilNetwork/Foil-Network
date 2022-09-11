@@ -312,9 +312,9 @@ public class AddressesResource {
         }
     }
 
-    @GET
-    @Path("makepairbyseed/{seed}")
-    public String makePair(@PathParam("seed") String seed) {
+    @POST
+    @Path("makepairbyseed")
+    public String makePair(String seed) {
 
         // DECODE SEED
         byte[] seedBytes;
@@ -354,7 +354,8 @@ public class AddressesResource {
     public String makePairByPhrase(String phrase) {
 
         // MAKE SEED
-        byte[] seedBytes = Crypto.getInstance().digest(phrase.getBytes(StandardCharsets.UTF_8));
+        byte[] seedBytes = Crypto.getInstance().digest(
+                Crypto.getInstance().digest(phrase.getBytes(StandardCharsets.UTF_8)));
 
         // CREATE ACCOUNT
         PrivateKeyAccount account = new PrivateKeyAccount(seedBytes);
