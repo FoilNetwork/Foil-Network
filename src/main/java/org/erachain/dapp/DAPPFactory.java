@@ -13,6 +13,7 @@ import org.erachain.core.transaction.TransactionAmount;
 import org.erachain.dapp.epoch.DogePlanet;
 import org.erachain.dapp.epoch.LeafFall;
 import org.erachain.dapp.epoch.Refi;
+import org.erachain.dapp.epoch.Voucher;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGathering_01DAPP;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGatheringDAPP;
 import org.erachain.dapp.epoch.shibaverse.ShibaVerseDAPP;
@@ -42,6 +43,7 @@ public abstract class DAPPFactory {
         MemeTheGatheringDAPP.setDAPPFactory(stocks);
         MemeTheGathering_01DAPP.setDAPPFactory(stocks);
         Refi.setDAPPFactory(stocks);
+        Voucher.setDAPPFactory(stocks);
 
     }
 
@@ -54,7 +56,7 @@ public abstract class DAPPFactory {
      */
     static public DAPP make(Transaction transaction) {
 
-        if (!BlockChain.TEST_MODE || transaction.getBlockHeight() < 386460)
+        if (!BlockChain.TEST_MODE || BlockChain.DEMO_MODE && transaction.getBlockHeight() < 386460)
             return null;
 
         /////////// EVENTS
@@ -78,7 +80,7 @@ public abstract class DAPPFactory {
 
         RSend txSend = (RSend) transaction;
 
-        if (false && BlockChain.TEST_MODE) {
+        if (BlockChain.TEST_MODE) {
             Refi dapp = Refi.tryMakeJob(txSend);
             if (dapp != null)
                 return dapp;
@@ -86,7 +88,8 @@ public abstract class DAPPFactory {
 
         if (!txSend.getRecipient().isDAppOwned()) {
             ///// OLD VERSION
-            if (txSend.balancePosition() == TransactionAmount.ACTION_SPEND && txSend.hasAmount()
+            if (BlockChain.TEST_MODE &&
+                    txSend.balancePosition() == TransactionAmount.ACTION_SPEND && txSend.hasAmount()
             ) {
                 if (txSend.hasPacket()) {
 
@@ -115,7 +118,7 @@ public abstract class DAPPFactory {
                 return null;
         }
 
-        String dataStr = txSend.isText() && !txSend.isEncrypted() ? new String(txSend.getData(), StandardCharsets.UTF_8).toLowerCase() : null;
+        String dataStr = txSend.isText() && !txSend.isEncrypted() ? new String(txSend.getData(), StandardCharsets.UTF_8) : null;
 
         switch (dappID) {
             case Refi.ID:
@@ -128,6 +131,8 @@ public abstract class DAPPFactory {
                 return MemeTheGatheringDAPP.make(txSend, dataStr);
             case MemeTheGathering_01DAPP.ID:
                 return MemeTheGathering_01DAPP.make(txSend, dataStr);
+            case Voucher.ID:
+                return Voucher.make(txSend, dataStr);
         }
 
         return null;
@@ -150,6 +155,10 @@ public abstract class DAPPFactory {
                 return MemeTheGatheringDAPP.NAME;
             case MemeTheGathering_01DAPP.ID:
                 return MemeTheGathering_01DAPP.NAME;
+            case Refi.ID:
+                return Refi.NAME;
+            case Voucher.ID:
+                return Voucher.NAME;
         }
 
         return null;

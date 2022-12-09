@@ -621,7 +621,7 @@ public class ShibaVerseDAPP extends EpochDAPPjson {
         }
     }
 
-    //////////////////// ADMIN PROCCESS
+    //////////////////// ADMIN PROCESS
 
     /**
      * Example of command: ["set price", {"1001": {"1": 0.1, "18":"0.01"}}]
@@ -908,12 +908,7 @@ public class ShibaVerseDAPP extends EpochDAPPjson {
     }
 
     @Override
-    public void orphan(DCSet dcSet, Transaction transaction) {
-
-        if (status.startsWith("error")) {
-            // not processed
-            return;
-        }
+    public void orphanBody(DCSet dcSet, Transaction transaction) {
 
         if (isAdminCommand(transaction)) {
             orphanAdminCommands(dcSet, (RSend) transaction,

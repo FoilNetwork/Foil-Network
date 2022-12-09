@@ -910,7 +910,7 @@ Evgenii Evgenii Kuzin, [18.04.21 19:33]
         return DEFAULT_RPC_ENABLED;
     }
 
-    public boolean getbacUpEnabled() {
+    public boolean getbackUpEnabled() {
         if (this.settingsJSON.containsKey("backupenabled")) {
             return ((Boolean) this.settingsJSON.get("backupenabled")).booleanValue();
         }
@@ -961,7 +961,7 @@ Evgenii Evgenii Kuzin, [18.04.21 19:33]
     }
 
 
-    public boolean getbacUpAskToStart() {
+    public boolean getbackUpAskToStart() {
         if (this.settingsJSON.containsKey("backupasktostart")) {
             return ((Boolean) this.settingsJSON.get("backupasktostart")).booleanValue();
         }
