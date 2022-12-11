@@ -140,6 +140,7 @@ public class Voucher extends EpochDAPPjson {
                         "每个NFT令牌100%由我们的储备金担保，包括传统的货币和现金等价物，以及由voola提供给第三方的其他资产和应收账款。</p>"
                         + "<p> Send to " + stock.getAddress() + " for withdraw + </p>";
 
+                // SVG
                 AssetUnique voucherAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
                         stock, name,
