@@ -32,6 +32,7 @@ public class Voucher extends EpochDAPPjson {
     static public final int ID = 99012;
     static public final String NAME = "Voucher dApp";
     static public final String ASSET_NAME = "Red envelope";
+    static public final long PROTO_ASSET_KEY = 1050898;
 
     // APPBNt7cZp89L5j47Ud62ZRSiKb1Y9hYjD
     final public static PublicKeyAccount MAKER = PublicKeyAccount.makeForDApp(crypto.digest(Longs.toByteArray(ID)));
@@ -88,7 +89,8 @@ public class Voucher extends EpochDAPPjson {
                 status = "";
                 String coins = (String) pars.get(1);
                 String amountStr = pars.get(2).toString();
-                BigDecimal amount = new BigDecimal(amountStr);
+                int amountInt = new Integer(amountStr);
+                BigDecimal amount = new BigDecimal(amountInt);
                 Account recipient = new Account(pars.get(3).toString());
 
                 String name = ASSET_NAME;
@@ -96,7 +98,6 @@ public class Voucher extends EpochDAPPjson {
                 int iconType = 0;
                 boolean imageAsURL = true;
                 int imageType = 0;
-                long protoAssetKey = 1050898;
                 Long startDate = null;
                 Long stopDate = null;
                 String tags = "";
@@ -119,6 +120,18 @@ public class Voucher extends EpochDAPPjson {
                     return false;
                 }
 
+                int level;
+                if (amountInt <= 10)
+                    level = 0;
+                else if (amountInt <= 50)
+                    level = 1;
+                else if (amountInt <= 250)
+                    level = 2;
+                else if (amountInt <= 1000)
+                    level = 3;
+                else
+                    level = 4;
+
                 //JSONArray array = new JSONArray();
                 //array.add(coins); array.add(amount);
                 String description = "<p>Stable <b>Voola</b> tokens exist as NFT tokens of the ERC-721 standard, built on several leading blockchains. The StableNFT architecture consists of open source smart contracts and the NFT PAY software package, which interacts with blockchains, allowing you to pay, store, send and receive funds using a non-fungible token as a payment method.\n" +
@@ -129,8 +142,8 @@ public class Voucher extends EpochDAPPjson {
 
                 AssetUnique voucherAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
-                        stock, name, ("/apiasset/icon/" + protoAssetKey).getBytes(StandardCharsets.UTF_8),
-                        ("/apiasset/image/" + protoAssetKey).getBytes(StandardCharsets.UTF_8),
+                        stock, name, ("/apiasset/icon/" + (PROTO_ASSET_KEY + level)).getBytes(StandardCharsets.UTF_8),
+                        ("/apiasset/image/" + PROTO_ASSET_KEY).getBytes(StandardCharsets.UTF_8),
                         description, AssetCls.AS_NON_FUNGIBLE);
                 voucherAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
