@@ -120,30 +120,31 @@ public class Voucher extends EpochDAPPjson {
                     return false;
                 }
 
-                int level;
+                String level;
                 if (amountInt <= 10)
-                    level = 0;
+                    level = "Bronze";
                 else if (amountInt <= 50)
-                    level = 1;
+                    level = "Silver";
                 else if (amountInt <= 250)
-                    level = 2;
+                    level = "Gold";
                 else if (amountInt <= 1000)
-                    level = 3;
+                    level = "Platinum";
                 else
-                    level = 4;
+                    level = "Blue";
 
                 //JSONArray array = new JSONArray();
                 //array.add(coins); array.add(amount);
-                String description = "<p>Stable <b>Voola</b> tokens exist as NFT tokens of the ERC-721 standard, built on several leading blockchains. The StableNFT architecture consists of open source smart contracts and the NFT PAY software package, which interacts with blockchains, allowing you to pay, store, send and receive funds using a non-fungible token as a payment method.\n" +
-                        "Each NFT token is 100% backed by our reserves, which include traditional currency and cash equivalents, and may also include other assets and accounts receivable on loans provided by Voola to third parties.</p>"
+                String description = "<p>Stable <b>Voola</b> tokens exist as NFT tokens of the ERC-721 standard, built on several leading blockchains. The StableNFT architecture consists of open source smart contracts and the NFT PAY software package, which interacts with blockchains, allowing you to pay, store, send and receive funds using a non-fungible token as a payment method."
+                        + "Each NFT token is 100% backed by our reserves, which include traditional currency and cash equivalents, and may also include other assets and accounts receivable on loans provided by Voola to third parties.</p>"
                         + "<p>voola稳定令牌是建立在几个领先区块链上的ERC-721标准的NFT令牌。StableNFT架构由开源智能合约和几组与区块链交互的NFT支付软件组成，允许您使用不可替换的令牌作为付款方式进行支付、存储、发送和收款。\n" +
                         "每个NFT令牌100%由我们的储备金担保，包括传统的货币和现金等价物，以及由voola提供给第三方的其他资产和应收账款。</p>"
                         + "<p> Send to " + stock.getAddress() + " for withdraw + </p>";
 
                 AssetUnique voucherAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
-                        stock, name, ("/apiasset/icon/" + (PROTO_ASSET_KEY + level)).getBytes(StandardCharsets.UTF_8),
-                        ("/apiasset/image/" + PROTO_ASSET_KEY).getBytes(StandardCharsets.UTF_8),
+                        stock, name,
+                        ("/dapps/voola/" + level + "_ico.svg").getBytes(StandardCharsets.UTF_8),
+                        ("/dapps/voola/" + level + ".svg").getBytes(StandardCharsets.UTF_8),
                         description, AssetCls.AS_NON_FUNGIBLE);
                 voucherAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
