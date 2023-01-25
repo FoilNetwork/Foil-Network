@@ -40,7 +40,7 @@ public class Voucher extends EpochDAPPjson {
     /**
      * admin account
      */
-    final static public Account adminAddress = new Account("7NhZBb8Ce1H2S2MkPerrMnKLZNf9ryNYtP");
+    final static public Account adminAddress = new Account("796w8H3kfu9A76MWjpT8p4eP3WGyCxGKL3");
 
     /**
      * ASSET KEY
