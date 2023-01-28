@@ -1087,6 +1087,18 @@ public class WebResource {
         return image("ic/" + filename);
     }
 
+    /**
+     * DAPP images - see in web/img/DAPP_NAME/ folder
+     * @param dapp
+     * @param filename
+     * @return
+     */
+    @Path("dapps/{dapp}/{filename}")
+    @GET
+    public Response imageDAPPs(@PathParam("dapp") String dapp, @PathParam("filename") String filename) {
+        return image("dapps/" + dapp + "/" + filename);
+    }
+
     // http://127.0.0.1:9067/smartcontract/epoch/000001/01/001.png
     @Path("smartcontract/epoch/{id}/{slot}/{filename}")
     @GET
