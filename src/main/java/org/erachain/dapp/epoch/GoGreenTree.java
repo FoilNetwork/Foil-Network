@@ -145,17 +145,16 @@ public class GoGreenTree extends EpochDAPPjson {
                 json.put("t", type);
                 json.put("v", amount.toPlainString());
 
-                // SVG
-                AssetUnique voucherAsset = new AssetUnique(AssetCls.makeAppData(
+                AssetUnique treeAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
                         stock, name,
                         null, //("/dapps/gogreentree/" + type + "0_ico.svg").getBytes(StandardCharsets.UTF_8),
                         ("/dapps/gogreentree/tree_" + type + "_0.jpg").getBytes(StandardCharsets.UTF_8),
                         json.toString(), AssetCls.AS_NON_FUNGIBLE);
-                voucherAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
+                treeAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
                 //INSERT INTO BLOCKCHAIN DATABASE
-                assetKey = assetMap.incrementPut(voucherAsset);
+                assetKey = assetMap.incrementPut(treeAsset);
 
                 // SET AMOUNT
                 stock.changeBalance(dcSet, false, false, assetKey,
@@ -181,7 +180,8 @@ public class GoGreenTree extends EpochDAPPjson {
     }
 
     /**
-     * Use: ["care", "GoGreen Tree key"] - ["care", "12032"]
+     * update some ggTree
+     * Use: ["care", GoGreen_Tree_key] - ["care", 12032]
      * @param dcSet
      * @param block
      * @param commandTX
@@ -248,13 +248,18 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 Long vol = Long.parseLong((String) json.get("v"));
                 vol += amount.longValue();
+                json.put("v", vol);
 
-                ggTree.
+                AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
+                        stock, ggTree.getName(),
+                        ggTree.getIcon(),
+                        ggTree.getImage(),
+                        json.toString(), AssetCls.AS_NON_FUNGIBLE);
+                treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
 
-                // store results for orphan
-                /// putState(dcSet, refDB, new Object[]{assetKey});
+                dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
-                status = "done " + assetKey;
+                status = "done. New vol:" + vol;
 
             } catch (Exception e) {
                 fail(status + "{" + e.getMessage() + "}" + (commandTX.hasAmount() && commandTX.balancePosition() == Account.BALANCE_POS_OWN ?
