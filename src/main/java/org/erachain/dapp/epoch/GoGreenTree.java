@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 /**
  * Send public 20 GG to APPC3f7Sa6fABm7woHfiQPbQd38Wy9cJMJ
- * Set text: ["plant", "0", "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
+ * Set text: ["plant", 0, "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
  */
 public class GoGreenTree extends EpochDAPPjson {
 
@@ -120,7 +120,7 @@ public class GoGreenTree extends EpochDAPPjson {
             try {
                 // ["plant", "type", 100, "7sadiuwyer7625346XXX"] - command, type, amount, recipient
                 status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong TYPE: ";
-                String type = (String) pars.get(1);
+                String type = pars.get(1).toString();
                 status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong recipient address: ";
                 Account recipient = new Account(pars.get(2).toString());
 
@@ -181,7 +181,7 @@ public class GoGreenTree extends EpochDAPPjson {
 
     /**
      * update some ggTree
-     * Use: ["care", GoGreen_Tree_key] - ["care", 12032]
+     * Use: ["care", GoGreen_Tree_key] - ["pour", 3108]
      * @param dcSet
      * @param block
      * @param commandTX
@@ -258,6 +258,10 @@ public class GoGreenTree extends EpochDAPPjson {
                 treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
 
                 dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
+
+                // TRANSFER ASSET
+                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, AssetCls.USD_KEY,
+                        false, null, "care bonus");
 
                 status = "done. New vol:" + vol;
 
