@@ -137,8 +137,8 @@ public class GoGreenTree extends EpochDAPPjson {
                 AssetUnique voucherAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
                         stock, name,
-                        ("/dapps/gogreentree/" + type + "0_ico.svg").getBytes(StandardCharsets.UTF_8),
-                        ("/dapps/gogreentree/" + type + "0.svg").getBytes(StandardCharsets.UTF_8),
+                        null, //("/dapps/gogreentree/" + type + "0_ico.svg").getBytes(StandardCharsets.UTF_8),
+                        ("/dapps/gogreentree/tree_0tree_0_" + type + "0.jpg").getBytes(StandardCharsets.UTF_8),
                         json.toString(), AssetCls.AS_NON_FUNGIBLE);
                 voucherAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
