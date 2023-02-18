@@ -14,6 +14,7 @@ import org.erachain.core.transaction.Transaction;
 import org.erachain.dapp.EpochDAPPjson;
 import org.erachain.datachain.DCSet;
 import org.erachain.datachain.ItemAssetMap;
+import org.json.simple.JSONObject;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +34,7 @@ public class GoGreenTree extends EpochDAPPjson {
     static public final long GO_GREEN_ASSET_KEY = BlockChain.TEST_MODE? 1 : 1050898;
     static public final BigDecimal MIN_VALUE = new BigDecimal("20");
 
-    // APPBNt7cZp89L5j47Ud62ZRSiKb1Y9hYjD
+    // APPC3f7Sa6fABm7woHfiQPbQd38Wy9cJMJ
     final public static PublicKeyAccount MAKER = PublicKeyAccount.makeForDApp(crypto.digest(Longs.toByteArray(ID)));
 
     /**
@@ -89,7 +90,7 @@ public class GoGreenTree extends EpochDAPPjson {
             String wrong = null;
             if (!commandTX.hasAmount())
                 wrong = "empty amount";
-            else if (commandTX.getAssetKey() != GO_GREEN_ASSET_KEY)
+            else if (commandTX.getAbsKey() != GO_GREEN_ASSET_KEY)
                 wrong = "wrong asset, need: " + GO_GREEN_ASSET_KEY;
             else if (commandTX.balancePosition() != Account.BALANCE_POS_OWN)
                 wrong = "wrong balance position, need: " + Account.BALANCE_POS_OWN;
@@ -98,18 +99,18 @@ public class GoGreenTree extends EpochDAPPjson {
 
             if (wrong != null) {
                 fail(wrong + (commandTX.hasAmount() && commandTX.balancePosition() == Account.BALANCE_POS_OWN ?
-                        " ,thanks for donate project!" : "."));
+                        ", thanks for donate project!" : "."));
                 return false;
             }
 
+            BigDecimal amount = commandTX.getAmount();
+
             try {
                 // ["plant", "type", 100, "7sadiuwyer7625346XXX"] - command, type, amount, recipient
-                status = "";
+                status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong TYPE: ";
                 String type = (String) pars.get(1);
-                String amountStr = pars.get(2).toString();
-                int amountInt = new Integer(amountStr);
-                BigDecimal amount = new BigDecimal(amountInt);
-                Account recipient = new Account(pars.get(3).toString());
+                status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong recipient address: ";
+                Account recipient = new Account(pars.get(2).toString());
 
                 String name = ASSET_NAME;
                 boolean iconAsURL = true;
@@ -124,31 +125,21 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 boolean isAnonimDenied = false;
 
-
-                String level;
-                if (amountInt <= 10)
-                    level = "Bronze";
-                else if (amountInt <= 50)
-                    level = "Silver";
-                else if (amountInt <= 250)
-                    level = "Gold";
-                else if (amountInt <= 1000)
-                    level = "Platinum";
-                else
-                    level = "Blue";
-
-                //JSONArray array = new JSONArray();
-                //array.add(coins); array.add(amount);
                 String description = "<p>GG TREE</p>"
                         + "<p> Send to " + stock.getAddress() + " for GG + </p>";
+
+                JSONObject json = new JSONObject();
+                json.put("d", description);
+                json.put("t", type);
+                json.put("v", amount.toPlainString());
 
                 // SVG
                 AssetUnique voucherAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
                         stock, name,
-                        ("/dapps/voola/" + level + "_ico.svg").getBytes(StandardCharsets.UTF_8),
-                        ("/dapps/voola/" + level + ".svg").getBytes(StandardCharsets.UTF_8),
-                        description, AssetCls.AS_NON_FUNGIBLE);
+                        ("/dapps/gogreentree/" + type + "0_ico.svg").getBytes(StandardCharsets.UTF_8),
+                        ("/dapps/gogreentree/" + type + "0.svg").getBytes(StandardCharsets.UTF_8),
+                        json.toString(), AssetCls.AS_NON_FUNGIBLE);
                 voucherAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
                 //INSERT INTO BLOCKCHAIN DATABASE
@@ -167,7 +158,8 @@ public class GoGreenTree extends EpochDAPPjson {
                 status = "done " + assetKey;
 
             } catch (Exception e) {
-                fail(e.getMessage());
+                fail(status + "{" + e.getMessage() + "}" + (commandTX.hasAmount() && commandTX.balancePosition() == Account.BALANCE_POS_OWN ?
+                        ", thanks for donate project!" : "."));
             }
 
         }
@@ -176,48 +168,6 @@ public class GoGreenTree extends EpochDAPPjson {
 
     }
 
-    private boolean withdraw(DCSet dcSet, Block block, RSend commandTX, boolean asOrphan) {
-
-        AssetCls asset = commandTX.getAsset();
-        String coinsAmo = asset.getName().substring(ASSET_NAME.length()).trim();
-        String[] split = coinsAmo.split(" ");
-        String coins;
-        String amount;
-        if (split.length == 2) {
-            amount = split[0];
-            coins = split[1];
-        } else {
-            amount = coinsAmo.substring(0, coinsAmo.length() - 1);
-            coins = "USD";
-        }
-
-        Long assetKey;
-        if (coins.equals("USD"))
-            assetKey = 1840L;
-        else if(coins.equals("DOGE"))
-            assetKey = 18L;
-        else {
-            fail("wrong coin");
-            return false;
-        }
-
-
-        if (asOrphan) {
-
-            transfer(dcSet, null, commandTX, stock, commandTX.getCreator(), new BigDecimal(amount), assetKey, true, null, null);
-
-        } else {
-
-            // TRANSFER ASSET
-            transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), new BigDecimal(amount), assetKey, false, null, "withdraw");
-
-            status = "done";
-
-        }
-
-        return true;
-
-    }
 
     //////////////////// ADMIN PROCESS
 
@@ -246,12 +196,10 @@ public class GoGreenTree extends EpochDAPPjson {
 
         else {
             RSend rSend = (RSend) commandTX;
-            if (rSend.getAsset().getMaker().equals(stock))
-                return withdraw(dcSet, block, rSend, false);
         }
 
         fail("unknown command" + (commandTX instanceof RSend && ((RSend)commandTX).hasAmount()
-                && ((RSend)commandTX).balancePosition() == Account.BALANCE_POS_OWN? " ,thanks for donate project!" : "."));
+                && ((RSend)commandTX).balancePosition() == Account.BALANCE_POS_OWN? ", thanks for donate project!" : "."));
         return false;
 
     }
@@ -273,9 +221,6 @@ public class GoGreenTree extends EpochDAPPjson {
             init(dcSet, null, commandTX, true);
 
         else {
-            RSend rSend = (RSend) commandTX;
-            if (rSend.getAsset().getMaker().equals(stock))
-                withdraw(dcSet, null, rSend, true);
         }
 
     }
