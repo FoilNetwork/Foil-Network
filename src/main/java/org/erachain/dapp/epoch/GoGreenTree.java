@@ -14,7 +14,9 @@ import org.erachain.core.transaction.Transaction;
 import org.erachain.dapp.EpochDAPPjson;
 import org.erachain.datachain.DCSet;
 import org.erachain.datachain.ItemAssetMap;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -22,8 +24,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * Send public mail to APPBNt7cZp89L5j47Ud62ZRSiKb1Y9hYjD
- * Set text: ["mint","DOGE", 100, "7Recipient"]
+ * Send public 20 GG to APPC3f7Sa6fABm7woHfiQPbQd38Wy9cJMJ
+ * Set text: ["plant", "0", "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
  */
 public class GoGreenTree extends EpochDAPPjson {
 
@@ -34,6 +36,7 @@ public class GoGreenTree extends EpochDAPPjson {
     static public final long GO_GREEN_ASSET_KEY = BlockChain.TEST_MODE? 1 : 1050898;
     static public final BigDecimal MIN_VALUE = new BigDecimal("20");
 
+    //
     // APPC3f7Sa6fABm7woHfiQPbQd38Wy9cJMJ
     final public static PublicKeyAccount MAKER = PublicKeyAccount.makeForDApp(crypto.digest(Longs.toByteArray(ID)));
 
@@ -65,9 +68,18 @@ public class GoGreenTree extends EpochDAPPjson {
 
 
     ///////// COMMANDS
+
+    /**
+     * Use: ["plant", "type", "recipient address"] - ["plant", "0", "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
+     * @param dcSet
+     * @param block
+     * @param commandTX
+     * @param asOrphan
+     * @return
+     */
     private boolean plant(DCSet dcSet, Block block, RSend commandTX, boolean asOrphan) {
 
-        Long refDB = commandTX.getDBRef();
+        //Long refDB = commandTX.getDBRef();
         Long assetKey;
         ItemAssetMap assetMap = dcSet.getItemAssetMap();
 
@@ -138,7 +150,7 @@ public class GoGreenTree extends EpochDAPPjson {
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
                         stock, name,
                         null, //("/dapps/gogreentree/" + type + "0_ico.svg").getBytes(StandardCharsets.UTF_8),
-                        ("/dapps/gogreentree/tree_0tree_0_" + type + "0.jpg").getBytes(StandardCharsets.UTF_8),
+                        ("/dapps/gogreentree/tree_" + type + "_0.jpg").getBytes(StandardCharsets.UTF_8),
                         json.toString(), AssetCls.AS_NON_FUNGIBLE);
                 voucherAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
@@ -151,6 +163,93 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 // TRANSFER ASSET
                 transfer(dcSet, block, commandTX, stock, recipient, BigDecimal.ONE, assetKey, false, null, "mint");
+
+                // store results for orphan
+                /// putState(dcSet, refDB, new Object[]{assetKey});
+
+                status = "done " + assetKey;
+
+            } catch (Exception e) {
+                fail(status + "{" + e.getMessage() + "}" + (commandTX.hasAmount() && commandTX.balancePosition() == Account.BALANCE_POS_OWN ?
+                        ", thanks for donate project!" : "."));
+            }
+
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Use: ["care", "GoGreen Tree key"] - ["care", "12032"]
+     * @param dcSet
+     * @param block
+     * @param commandTX
+     * @param asOrphan
+     * @return
+     */
+    private boolean care(DCSet dcSet, Block block, RSend commandTX, boolean asOrphan) {
+
+        Long refDB = commandTX.getDBRef();
+        Long assetKey;
+        ItemAssetMap assetMap = dcSet.getItemAssetMap();
+
+        if (asOrphan) {
+            // Object[] result = removeState(dcSet, refDB);
+            // assetKey = (Long)result[0];
+            assetKey = assetMap.getLastKey();
+
+            // RESET AMOUNT
+            stock.changeBalance(dcSet, true, false, assetKey,
+                    BigDecimal.ONE, false, false, true, 0);
+
+            transfer(dcSet, null, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, assetKey, true, null, null);
+
+            // DELETE FROM BLOCKCHAIN DATABASE
+            dcSet.getItemAssetMap().decrementDelete(assetKey);
+
+        } else {
+
+            String wrong = null;
+            if (!commandTX.hasAmount())
+                wrong = "empty amount";
+            else if (commandTX.getAbsKey() != GO_GREEN_ASSET_KEY)
+                wrong = "wrong asset, need: " + GO_GREEN_ASSET_KEY;
+            else if (commandTX.balancePosition() != Account.BALANCE_POS_OWN)
+                wrong = "wrong balance position, need: " + Account.BALANCE_POS_OWN;
+            else if (commandTX.getAmount().compareTo(MIN_VALUE) < 0)
+                wrong = "wrong amount, need: >=" + MIN_VALUE.toPlainString();
+
+            if (wrong != null) {
+                fail(wrong + (commandTX.hasAmount() && commandTX.balancePosition() == Account.BALANCE_POS_OWN ?
+                        ", thanks for donate project!" : "."));
+                return false;
+            }
+
+            BigDecimal amount = commandTX.getAmount();
+
+            try {
+                // ["care", "GoGreen Tree key"] - ["care", "12032"]
+                status = "Use: [\"care\", \"GoGreen Tree key\"], wrong Tree key: ";
+                Long ggTreeKey = (Long) pars.get(1);
+
+                AssetCls ggTree = dcSet.getItemAssetMap().get(ggTreeKey);
+                if (!ggTree.getMaker().equals(MAKER)) {
+                    fail("not Go Green Tree asset");
+                    return false;
+                }
+
+                JSONParser jsonParser = new JSONParser();
+                JSONObject json = (JSONObject) jsonParser.parse(ggTree.getDescription());
+                if (json == null) {
+                    fail("ggTree desc JSON error");
+                    return false;
+                }
+
+                Long vol = Long.parseLong((String) json.get("v"));
+                vol += amount.longValue();
+
+                ggTree.
 
                 // store results for orphan
                 /// putState(dcSet, refDB, new Object[]{assetKey});
@@ -189,6 +288,8 @@ public class GoGreenTree extends EpochDAPPjson {
         if (COMMAND_PLANT.equals(command)
                 && (BlockChain.TEST_MODE || isAdminCommand(commandTX.getCreator())))
             return plant(dcSet, block, (RSend) commandTX, false);
+        else if (COMMAND_POUR.equals(command))
+            return care(dcSet, block, (RSend) commandTX, false);
 
             /// ADMIN COMMANDS
         else if ("init".equals(command))
@@ -215,6 +316,8 @@ public class GoGreenTree extends EpochDAPPjson {
         if (COMMAND_PLANT.equals(command)
                 && (BlockChain.TEST_MODE || isAdminCommand(commandTX.getCreator())))
             plant(dcSet, null, (RSend) commandTX, true);
+        else if (COMMAND_POUR.equals(command))
+            care(dcSet, null, (RSend) commandTX, true);
 
             /// ADMIN COMMANDS
         else if ("init".equals(command))
