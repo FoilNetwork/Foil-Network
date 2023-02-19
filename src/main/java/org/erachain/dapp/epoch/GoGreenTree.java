@@ -50,6 +50,7 @@ public class GoGreenTree extends EpochDAPPjson {
      */
     //static final private Tuple2 INIT_KEY = new Tuple2(ID, "i");
     final static public String COMMAND_PLANT = "plant";
+    //final static public String COMMAND_POUR = "pour";
     final static public String COMMAND_POUR = "pour";
     final static public String COMMAND_HUG = "hug";
 
@@ -70,7 +71,7 @@ public class GoGreenTree extends EpochDAPPjson {
     ///////// COMMANDS
 
     /**
-     * Use: ["plant", "type", "recipient address"] - ["plant", "0", "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
+     * Use: ["plant", type, "recipient address"] - ["plant", 0, "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
      * @param dcSet
      * @param block
      * @param commandTX
@@ -137,8 +138,7 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 boolean isAnonimDenied = false;
 
-                String description = "<p>GG TREE</p>"
-                        + "<p> Send to " + stock.getAddress() + " for GG + </p>";
+                String description = "Use: [\"pour\", GoGreen_Tree_key] - [\"pour\", 3108] and [\"plant\", 0, \"7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o\"]";
 
                 JSONObject json = new JSONObject();
                 json.put("d", description);
@@ -181,7 +181,7 @@ public class GoGreenTree extends EpochDAPPjson {
 
     /**
      * update some ggTree
-     * Use: ["care", GoGreen_Tree_key] - ["pour", 3108]
+     * Use: ["pour", GoGreen_Tree_key] - ["pour", 3108]
      * @param dcSet
      * @param block
      * @param commandTX
