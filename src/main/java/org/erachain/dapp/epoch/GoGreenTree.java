@@ -236,7 +236,7 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 AssetCls ggTree = dcSet.getItemAssetMap().get(ggTreeKey);
                 if (!ggTree.getMaker().equals(MAKER)) {
-                    fail("not Go Green Tree asset");
+                    fail("not GoGreen Tree asset");
                     return false;
                 }
 
