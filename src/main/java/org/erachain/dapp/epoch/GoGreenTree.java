@@ -26,6 +26,7 @@ import java.util.HashMap;
 /**
  * Send public 20 GG to APPC3f7Sa6fABm7woHfiQPbQd38Wy9cJMJ
  * Set text: ["plant", 0, "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
+ * ["pour", 3108]
  */
 public class GoGreenTree extends EpochDAPPjson {
 
@@ -246,9 +247,9 @@ public class GoGreenTree extends EpochDAPPjson {
                     return false;
                 }
 
-                Long vol = Long.parseLong((String) json.get("v"));
-                vol += amount.longValue();
-                json.put("v", vol);
+                BigDecimal vol = new BigDecimal(json.get("v").toString());
+                vol = amount.add(vol);
+                json.put("v", vol.toPlainString());
 
                 AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
                         stock, ggTree.getName(),
@@ -263,7 +264,7 @@ public class GoGreenTree extends EpochDAPPjson {
                 transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, AssetCls.USD_KEY,
                         false, null, "care bonus");
 
-                status = "done. New vol:" + vol;
+                status = "done. New vol: " + vol.toPlainString();
 
             } catch (Exception e) {
                 fail(status + "{" + e.getMessage() + "}" + (commandTX.hasAmount() && commandTX.balancePosition() == Account.BALANCE_POS_OWN ?
