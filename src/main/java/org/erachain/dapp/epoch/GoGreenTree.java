@@ -251,10 +251,21 @@ public class GoGreenTree extends EpochDAPPjson {
                 vol = amount.add(vol);
                 json.put("v", vol.toPlainString());
 
+                String type = (String) json.get("t");
+
+                byte[] image;
+                if (vol.compareTo(new BigDecimal("300")) < 0) {
+                    image = ("/dapps/gogreentree/tree_" + type + "_0.jpg").getBytes(StandardCharsets.UTF_8);
+                } else if (vol.compareTo(new BigDecimal("1000")) < 0) {
+                    image = ("/dapps/gogreentree/tree_" + type + "_1.jpg").getBytes(StandardCharsets.UTF_8);
+                } else {
+                    image = ("/dapps/gogreentree/tree_" + type + "_2.jpg").getBytes(StandardCharsets.UTF_8);
+                }
+
                 AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
                         stock, ggTree.getName(),
                         ggTree.getIcon(),
-                        ggTree.getImage(),
+                        image,
                         json.toString(), AssetCls.AS_NON_FUNGIBLE);
                 treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
 
