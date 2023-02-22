@@ -26,14 +26,14 @@ import java.util.HashMap;
 /**
  * Send public 20 GG to APPC3f7Sa6fABm7woHfiQPbQd38Wy9cJMJ
  * Set text: ["plant", 0, "7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o"]
- * ["pour", 3108]
+ * ["pour", 1048577]
  */
 public class GoGreenTree extends EpochDAPPjson {
 
 
     static public final int ID = 99017;
     static public final String NAME = "GoGreenTree dApp";
-    static public final String ASSET_NAME = "My Tree";
+    static public final String ASSET_NAME = "GGT";
     static public final long GO_GREEN_ASSET_KEY = BlockChain.TEST_MODE? 1 : 1050898;
     static public final BigDecimal MIN_VALUE = new BigDecimal("20");
 
@@ -118,6 +118,7 @@ public class GoGreenTree extends EpochDAPPjson {
             }
 
             BigDecimal amount = commandTX.getAmount();
+            String name = ASSET_NAME;
 
             try {
                 // ["plant", "type", 100, "7sadiuwyer7625346XXX"] - command, type, amount, recipient
@@ -129,6 +130,13 @@ public class GoGreenTree extends EpochDAPPjson {
                         status = "wrong TYPE <> 0..4 ";
                         return false;
                     }
+                    switch (tt) {
+                        case 0: name += " Voola"; break;
+                        case 1: name += " Ambar"; break;
+                        case 2: name += " Barca"; break;
+                        case 3: name += " CCCB"; break;
+                        case 4: name += " Flagship"; break;
+                    }
                 } catch (Exception e) {
                     return false;
                 }
@@ -136,7 +144,6 @@ public class GoGreenTree extends EpochDAPPjson {
                 status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong recipient address: ";
                 Account recipient = new Account(pars.get(2).toString());
 
-                String name = ASSET_NAME;
                 boolean iconAsURL = true;
                 int iconType = 0;
                 boolean imageAsURL = true;
@@ -160,7 +167,7 @@ public class GoGreenTree extends EpochDAPPjson {
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
                         stock, name,
                         null, //("/dapps/gogreentree/" + type + "0_ico.svg").getBytes(StandardCharsets.UTF_8),
-                        ("/dapps/gogreentree/tree_" + type + "_0.jpg").getBytes(StandardCharsets.UTF_8),
+                        ("/dapps/gogreentree/tree_" + type + "_0.png").getBytes(StandardCharsets.UTF_8),
                         json.toString(), AssetCls.AS_NON_FUNGIBLE);
                 treeAsset.setReference(commandTX.getSignature(), commandTX.getDBRef());
 
@@ -265,11 +272,13 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 byte[] image;
                 if (vol.compareTo(new BigDecimal("300")) < 0) {
-                    image = ("/dapps/gogreentree/tree_" + type + "_0.jpg").getBytes(StandardCharsets.UTF_8);
+                    image = ("/dapps/gogreentree/tree_" + type + "_0.png").getBytes(StandardCharsets.UTF_8);
                 } else if (vol.compareTo(new BigDecimal("1000")) < 0) {
-                    image = ("/dapps/gogreentree/tree_" + type + "_1.jpg").getBytes(StandardCharsets.UTF_8);
+                    image = ("/dapps/gogreentree/tree_" + type + "_1.png").getBytes(StandardCharsets.UTF_8);
+                } else if (vol.compareTo(new BigDecimal("3000")) < 0) {
+                    image = ("/dapps/gogreentree/tree_" + type + "_2.png").getBytes(StandardCharsets.UTF_8);
                 } else {
-                    image = ("/dapps/gogreentree/tree_" + type + "_2.jpg").getBytes(StandardCharsets.UTF_8);
+                    image = ("/dapps/gogreentree/tree_" + type + "_3.png").getBytes(StandardCharsets.UTF_8);
                 }
 
                 AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
@@ -282,7 +291,7 @@ public class GoGreenTree extends EpochDAPPjson {
                 dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
                 // TRANSFER ASSET
-                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, 3108 + Integer.parseInt(type),
+                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, 1048577L + Long.parseLong(type),
                         false, null, "care bonus");
 
                 status = "done. New vol: " + vol.toPlainString();
