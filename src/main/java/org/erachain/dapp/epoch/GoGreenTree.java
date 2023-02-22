@@ -123,6 +123,16 @@ public class GoGreenTree extends EpochDAPPjson {
                 // ["plant", "type", 100, "7sadiuwyer7625346XXX"] - command, type, amount, recipient
                 status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong TYPE: ";
                 String type = pars.get(1).toString();
+                try {
+                    int tt = Integer.parseInt(type);
+                    if (tt < 0 || tt > 4) {
+                        status = "wrong TYPE <> 0..4 ";
+                        return false;
+                    }
+                } catch (Exception e) {
+                    return false;
+                }
+
                 status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong recipient address: ";
                 Account recipient = new Account(pars.get(2).toString());
 
@@ -272,7 +282,7 @@ public class GoGreenTree extends EpochDAPPjson {
                 dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
                 // TRANSFER ASSET
-                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, AssetCls.USD_KEY,
+                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, 3108 + Integer.parseInt(type),
                         false, null, "care bonus");
 
                 status = "done. New vol: " + vol.toPlainString();
