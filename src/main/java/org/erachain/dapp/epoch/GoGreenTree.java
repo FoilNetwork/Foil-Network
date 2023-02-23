@@ -34,7 +34,7 @@ public class GoGreenTree extends EpochDAPPjson {
     static public final int ID = 99017;
     static public final String NAME = "GoGreenTree dApp";
     static public final String ASSET_NAME = "GGT";
-    static public final long GO_GREEN_ASSET_KEY = BlockChain.TEST_MODE? 1 : 1050898;
+    static public final long GO_GREEN_ASSET_KEY = BlockChain.TEST_MODE? 1048577L : 1048577L;
     static public final BigDecimal MIN_VALUE = new BigDecimal("20");
 
     //
@@ -126,8 +126,8 @@ public class GoGreenTree extends EpochDAPPjson {
                 String type = pars.get(1).toString();
                 try {
                     int tt = Integer.parseInt(type);
-                    if (tt < 0 || tt > 4) {
-                        status = "wrong TYPE <> 0..4 ";
+                    if (tt < 0 || tt > 5) {
+                        status = "wrong TYPE <> 0..5 ";
                         return false;
                     }
                     switch (tt) {
@@ -136,6 +136,7 @@ public class GoGreenTree extends EpochDAPPjson {
                         case 2: name += " Barca"; break;
                         case 3: name += " CCCB"; break;
                         case 4: name += " Flagship"; break;
+                        case 5: name += " Macba"; break;
                     }
                 } catch (Exception e) {
                     return false;
@@ -156,7 +157,7 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 boolean isAnonimDenied = false;
 
-                String description = "Use: [\"pour\", GoGreen_Tree_key] - [\"pour\", 3108] and [\"plant\", 0, \"7Mbik4Je6RXnsoE7dKhj6XXLcDU4WbPY9o\"]";
+                String description = "Go Green Tree";
 
                 JSONObject json = new JSONObject();
                 json.put("d", description);
@@ -291,7 +292,8 @@ public class GoGreenTree extends EpochDAPPjson {
                 dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
                 // TRANSFER ASSET
-                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, 1048577L + Long.parseLong(type),
+                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE,
+                        1L + GO_GREEN_ASSET_KEY + Long.parseLong(type),
                         false, null, "care bonus");
 
                 status = "done. New vol: " + vol.toPlainString();
