@@ -118,9 +118,13 @@ public class GoGreenTree extends EpochDAPPjson {
             }
 
             BigDecimal amount = commandTX.getAmount();
-            String name = ASSET_NAME;
+            String name;
 
             try {
+                String description;
+                JSONObject json = new JSONObject();
+                json.put("v", amount.toPlainString());
+
                 // ["plant", "type", 100, "7sadiuwyer7625346XXX"] - command, type, amount, recipient
                 status = "Use: [\"plant\", \"type\", \"recipient address\"], wrong TYPE: ";
                 String type = pars.get(1).toString();
@@ -131,13 +135,41 @@ public class GoGreenTree extends EpochDAPPjson {
                         return false;
                     }
                     switch (tt) {
-                        case 0: name += " Voola"; break;
-                        case 1: name += " Ambar"; break;
-                        case 2: name += " Barca"; break;
-                        case 3: name += " CCCB"; break;
-                        case 4: name += " Flagship"; break;
-                        case 5: name += " Macba"; break;
+                        case 0:
+                            name = "The Mighty Oak";
+                            description = "<h2 style=\"color: #2e6c80;\">Prize: Plant a tree in Madagascar</h2>" +
+                                    "<p><a href=\"https://tree-nation.com/profile/gogreen\">https://tree-nation.com/profile/gogreen</a></p>" +
+                                    "<p>The mighty oak tree, towering over the forest floor, is a symbol of strength and longevity. Its sturdy trunk and sprawling branches provide a home for countless creatures, while its acorns nourish a multitude of forest dwellers. With a lifespan of up to 1,000 years, the oak has stood the test of time, a testament to the resilience of nature.</p>";
+                            break;
+                        case 1:
+                            name = "Hop";
+                            description = "<h2 style=\"color: #2e6c80;\">Prize: Ambar Triple Zero beer</h2>" +
+                                    "<p><span style=\"font-weight: 400;\">Discover the hop plant. With its winding vines and delicate cones, it is a vital component in the creation of beer. From the soil to the sun, every element of its growth is meticulously cultivated to produce the finest flavor. With its rich history and cultural significance, the hop plant is truly a botanical wonder.</span></p>";
+                            break;
+                        case 2: name = "Ulmus parvifolia";
+                            description = "<h2 style=\"color: #2e6c80;\">Prize: Ticket to the FC Barcelona museum</h2>" +
+                                    "<p><span style=\"font-weight: 400;\">Discover the Ulmus parvifolia bonzai, a tree whose small stature belies its beauty and complexity. Through the careful cultivation of its branches and roots, the Ulmus parvifolia is transformed into a breathtaking work of art, embodying the harmony and balance of nature. It is a symbol of resilience and adaptability as well as a living testament to the skill and dedication of its caretaker.</span></p>";
+                            break;
+                        case 3: name = "Wisteria";
+                            description = "<h2 style=\"color: #2e6c80;\">Prize: Ticket to the Constel&middot;laci&oacute; gr&agrave;fica exhibition at CCCB</h2>" +
+                                    "<p><span style=\"font-weight: 400;\">The wisteria blooms in a magnificent display of beauty beneath the warm sun of East Asia. With its cascading tendrils and delicate petals, it is a true marvel of nature. A beloved feature of gardens and parks around the world, the wisteria's sweet fragrance and vibrant colors attract a diverse array of pollinators, making it a vital member of the ecosystem. The wisteria is a true testament to the beauty and importance of biodiversity in our world.</span></p>";
+                            break;
+                        case 4: name = "Populus tremuloides";
+                            description = "<h2 style=\"color: #2e6c80;\">Prize: &ldquo;Analyzing the crypto market&rdquo; course</h2>" +
+                                    "<p>The populus tremuloides is native to North America, where it is commonly known as the quaking aspen. With its striking white bark and fluttering leaves, it is a true wonder of the natural world. As a keystone species, it provides food and shelter for countless animals, while its interconnected root system helps to maintain soil stability. The quaking aspen truly embodies the intricate and interconnected web of life in our forests.</p>";
+                            break;
+                        case 5: name = "Ginko";
+                            description = "<h2 style=\"color: #2e6c80;\">Prize: Ticket to the MACBA museum</h2>" +
+                                    "<p>Discover the ginkgo tree from the ancient forests of China. It stands as a living relic of a bygone era. With its fan-shaped leaves and golden hues, it is a true marvel of nature. Known for its medicinal properties and resilience in the face of adversity, the ginkgo tree has captured the hearts and minds of people around the world. As a symbol of longevity and endurance, the ginkgo tree has played an important role in the cultural and spiritual traditions of many societies.</p>";
+                            break;
+                        default:
+                            fail("wrong type");
+                            return false;
                     }
+
+                    json.put("d", description);
+                    json.put("t", type);
+
                 } catch (Exception e) {
                     return false;
                 }
@@ -156,13 +188,6 @@ public class GoGreenTree extends EpochDAPPjson {
                 boolean isUnTransferable = false;
 
                 boolean isAnonimDenied = false;
-
-                String description = "Go Green Tree";
-
-                JSONObject json = new JSONObject();
-                json.put("d", description);
-                json.put("t", type);
-                json.put("v", amount.toPlainString());
 
                 AssetUnique treeAsset = new AssetUnique(AssetCls.makeAppData(
                         iconAsURL, iconType, imageAsURL, imageType, startDate, stopDate, tags, dexAwards, isUnTransferable, isAnonimDenied),
@@ -272,11 +297,11 @@ public class GoGreenTree extends EpochDAPPjson {
                 String type = (String) json.get("t");
 
                 byte[] image;
-                if (vol.compareTo(new BigDecimal("300")) < 0) {
+                if (vol.compareTo(new BigDecimal("100")) < 0) {
                     image = ("/dapps/gogreentree/tree_" + type + "_0.png").getBytes(StandardCharsets.UTF_8);
-                } else if (vol.compareTo(new BigDecimal("1000")) < 0) {
+                } else if (vol.compareTo(new BigDecimal("300")) < 0) {
                     image = ("/dapps/gogreentree/tree_" + type + "_1.png").getBytes(StandardCharsets.UTF_8);
-                } else if (vol.compareTo(new BigDecimal("3000")) < 0) {
+                } else if (vol.compareTo(new BigDecimal("500")) < 0) {
                     image = ("/dapps/gogreentree/tree_" + type + "_2.png").getBytes(StandardCharsets.UTF_8);
                 } else {
                     image = ("/dapps/gogreentree/tree_" + type + "_3.png").getBytes(StandardCharsets.UTF_8);
