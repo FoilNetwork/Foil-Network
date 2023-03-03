@@ -134,6 +134,9 @@ public class GoGreenTree extends EpochDAPPjson {
                         status = "wrong TYPE <> 0..5 ";
                         return false;
                     }
+
+                    json.put("t", type);
+
                     switch (tt) {
                         case 0:
                             name = "The Mighty Oak";
@@ -168,9 +171,9 @@ public class GoGreenTree extends EpochDAPPjson {
                     }
 
                     json.put("d", description);
-                    json.put("t", type);
 
                 } catch (Exception e) {
+                    fail(e.getMessage() + "\n" + e.getStackTrace().toString());
                     return false;
                 }
 
@@ -239,8 +242,6 @@ public class GoGreenTree extends EpochDAPPjson {
         ItemAssetMap assetMap = dcSet.getItemAssetMap();
 
         if (asOrphan) {
-            // Object[] result = removeState(dcSet, refDB);
-            // assetKey = (Long)result[0];
             assetKey = assetMap.getLastKey();
 
             // RESET AMOUNT
@@ -249,8 +250,10 @@ public class GoGreenTree extends EpochDAPPjson {
 
             transfer(dcSet, null, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, assetKey, true, null, null);
 
-            // DELETE FROM BLOCKCHAIN DATABASE
-            dcSet.getItemAssetMap().decrementDelete(assetKey);
+            // RESTORE DATA
+            Object[] result = removeState(dcSet, refDB);
+            ///assetKey = (Long)result[0];
+
 
         } else {
 
@@ -291,6 +294,7 @@ public class GoGreenTree extends EpochDAPPjson {
                 }
 
                 BigDecimal vol = new BigDecimal(json.get("v").toString());
+
                 vol = amount.add(vol);
                 json.put("v", vol.toPlainString());
 
@@ -316,12 +320,17 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
+                Long bonusKey = 1L + GO_GREEN_ASSET_KEY + Long.parseLong(type);
                 // TRANSFER ASSET
                 transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE,
-                        1L + GO_GREEN_ASSET_KEY + Long.parseLong(type),
+                        bonusKey,
                         false, null, "care bonus");
 
                 status = "done. New vol: " + vol.toPlainString();
+
+                // store results for orphan
+                putState(dcSet, refDB, new Object[]{ggTreeKey, ggTree.getImage(), ggTree.getDescription(), bonusKey});
+
 
             } catch (Exception e) {
                 fail(status + "{" + e.getMessage() + "}" + (commandTX.hasAmount() && commandTX.balancePosition() == Account.BALANCE_POS_OWN ?
