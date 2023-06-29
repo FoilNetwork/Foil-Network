@@ -35,6 +35,8 @@ public class GoGreenTree extends EpochDAPPjson {
     static public final String NAME = "GoGreenTree dApp";
     static public final String ASSET_NAME = "GGT";
     static public final long GO_GREEN_ASSET_KEY = BlockChain.TEST_MODE? 1048577L : 1048577L;
+    static public final long O2_ASSET_KEY = BlockChain.TEST_MODE? 1156L : 1048577L;
+    static public final int O2_START_BLOCK = BlockChain.TEST_MODE? 1 : 1048577;
     static public final BigDecimal MIN_VALUE = new BigDecimal("20");
 
     //
@@ -238,21 +240,29 @@ public class GoGreenTree extends EpochDAPPjson {
     private boolean care(DCSet dcSet, Block block, RSend commandTX, boolean asOrphan) {
 
         Long refDB = commandTX.getDBRef();
-        Long assetKey;
         ItemAssetMap assetMap = dcSet.getItemAssetMap();
 
+        Long bonusKey;
+        BigDecimal bonusAmount;
+
         if (asOrphan) {
-            assetKey = assetMap.getLastKey();
-
-            // RESET AMOUNT
-            stock.changeBalance(dcSet, true, false, assetKey,
-                    BigDecimal.ONE, false, false, true, 0);
-
-            transfer(dcSet, null, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE, assetKey, true, null, null);
 
             // RESTORE DATA
             Object[] result = removeState(dcSet, refDB);
-            ///assetKey = (Long)result[0];
+
+            if (O2_START_BLOCK < block.heightBlock) {
+                bonusKey = O2_ASSET_KEY;
+                bonusAmount = (BigDecimal) result[3];
+
+            } else {
+                bonusKey = assetMap.getLastKey();
+                bonusAmount = BigDecimal.ONE;
+            }
+
+            transfer(dcSet, null, commandTX, stock, commandTX.getCreator(), bonusAmount, bonusKey, true, null, null);
+
+            // store results for orphan
+            putState(dcSet, refDB, new Object[]{bonusAmount});
 
 
         } else {
@@ -301,35 +311,52 @@ public class GoGreenTree extends EpochDAPPjson {
                 String type = (String) json.get("t");
 
                 byte[] image;
+                int level;
                 if (vol.compareTo(new BigDecimal("100")) < 0) {
+                    level = 1;
                     image = ("/dapps/gogreentree/tree_" + type + "_0.png").getBytes(StandardCharsets.UTF_8);
                 } else if (vol.compareTo(new BigDecimal("300")) < 0) {
+                    level = 2;
                     image = ("/dapps/gogreentree/tree_" + type + "_1.png").getBytes(StandardCharsets.UTF_8);
                 } else if (vol.compareTo(new BigDecimal("500")) < 0) {
+                    level = 3;
                     image = ("/dapps/gogreentree/tree_" + type + "_2.png").getBytes(StandardCharsets.UTF_8);
                 } else {
+                    level = 4;
                     image = ("/dapps/gogreentree/tree_" + type + "_3.png").getBytes(StandardCharsets.UTF_8);
                 }
 
-                AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
-                        stock, ggTree.getName(),
-                        ggTree.getIcon(),
-                        image,
-                        json.toString(), AssetCls.AS_NON_FUNGIBLE);
-                treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
+                if (O2_START_BLOCK < block.heightBlock) {
+                    bonusKey = O2_ASSET_KEY;
+                    bonusAmount = amount.divide(BigDecimal.TEN, 8, BigDecimal.ROUND_UP).multiply(BigDecimal.valueOf(level));
 
-                dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
+                    // store results for orphan
+                    putState(dcSet, refDB, new Object[]{ggTreeKey, ggTree.getImage(), ggTree.getDescription(), bonusAmount});
 
-                Long bonusKey = 1L + GO_GREEN_ASSET_KEY + Long.parseLong(type);
+                } else {
+
+                    AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
+                            stock, ggTree.getName(),
+                            ggTree.getIcon(),
+                            image,
+                            json.toString(), AssetCls.AS_NON_FUNGIBLE);
+                    treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
+                    dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
+
+                    bonusKey = 1L + GO_GREEN_ASSET_KEY + Long.parseLong(type);
+                    bonusAmount = BigDecimal.ONE;
+
+                    // store results for orphan
+                    putState(dcSet, refDB, new Object[]{ggTreeKey, ggTree.getImage(), ggTree.getDescription(), bonusKey});
+
+                }
+
                 // TRANSFER ASSET
-                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), BigDecimal.ONE,
+                transfer(dcSet, block, commandTX, stock, commandTX.getCreator(), bonusAmount,
                         bonusKey,
                         false, null, "care bonus");
 
                 status = "done. New vol: " + vol.toPlainString();
-
-                // store results for orphan
-                putState(dcSet, refDB, new Object[]{ggTreeKey, ggTree.getImage(), ggTree.getDescription(), bonusKey});
 
 
             } catch (Exception e) {
