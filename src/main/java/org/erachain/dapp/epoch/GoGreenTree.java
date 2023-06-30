@@ -310,21 +310,30 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 String type = (String) json.get("t");
 
+                int addLevel = O2_START_BLOCK < block.heightBlock? 200 : 300;
                 byte[] image;
                 int level;
-                if (vol.compareTo(new BigDecimal("100")) < 0) {
+                if (vol.compareTo(new BigDecimal(100)) < 0) {
                     level = 1;
                     image = ("/dapps/gogreentree/tree_" + type + "_0.png").getBytes(StandardCharsets.UTF_8);
-                } else if (vol.compareTo(new BigDecimal("300")) < 0) {
+                } else if (vol.compareTo(new BigDecimal(100 + addLevel)) < 0) {
                     level = 2;
                     image = ("/dapps/gogreentree/tree_" + type + "_1.png").getBytes(StandardCharsets.UTF_8);
-                } else if (vol.compareTo(new BigDecimal("500")) < 0) {
+                } else if (vol.compareTo(new BigDecimal(100 + 2 * addLevel)) < 0) {
                     level = 3;
                     image = ("/dapps/gogreentree/tree_" + type + "_2.png").getBytes(StandardCharsets.UTF_8);
                 } else {
                     level = 4;
                     image = ("/dapps/gogreentree/tree_" + type + "_3.png").getBytes(StandardCharsets.UTF_8);
                 }
+
+                AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
+                        stock, ggTree.getName(),
+                        ggTree.getIcon(),
+                        image,
+                        json.toString(), AssetCls.AS_NON_FUNGIBLE);
+                treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
+                dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
                 if (O2_START_BLOCK < block.heightBlock) {
                     bonusKey = O2_ASSET_KEY;
@@ -334,14 +343,6 @@ public class GoGreenTree extends EpochDAPPjson {
                     putState(dcSet, refDB, new Object[]{ggTreeKey, ggTree.getImage(), ggTree.getDescription(), bonusAmount});
 
                 } else {
-
-                    AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
-                            stock, ggTree.getName(),
-                            ggTree.getIcon(),
-                            image,
-                            json.toString(), AssetCls.AS_NON_FUNGIBLE);
-                    treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
-                    dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
                     bonusKey = 1L + GO_GREEN_ASSET_KEY + Long.parseLong(type);
                     bonusAmount = BigDecimal.ONE;
