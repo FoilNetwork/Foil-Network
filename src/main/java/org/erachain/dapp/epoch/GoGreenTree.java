@@ -242,6 +242,8 @@ public class GoGreenTree extends EpochDAPPjson {
         Long refDB = commandTX.getDBRef();
         ItemAssetMap assetMap = dcSet.getItemAssetMap();
 
+        boolean newO2 = O2_START_BLOCK < block.heightBlock;
+
         Long bonusKey;
         BigDecimal bonusAmount;
 
@@ -250,7 +252,7 @@ public class GoGreenTree extends EpochDAPPjson {
             // RESTORE DATA
             Object[] result = removeState(dcSet, refDB);
 
-            if (O2_START_BLOCK < block.heightBlock) {
+            if (newO2) {
                 bonusKey = O2_ASSET_KEY;
                 bonusAmount = (BigDecimal) result[3];
 
@@ -286,6 +288,7 @@ public class GoGreenTree extends EpochDAPPjson {
             BigDecimal amount = commandTX.getAmount();
 
             try {
+
                 // ["care", "GoGreen Tree key"] - ["care", "12032"]
                 status = "Use: [\"care\", \"GoGreen Tree key\"], wrong Tree key: ";
                 Long ggTreeKey = (Long) pars.get(1);
@@ -310,7 +313,7 @@ public class GoGreenTree extends EpochDAPPjson {
 
                 String type = (String) json.get("t");
 
-                int addLevel = O2_START_BLOCK < block.heightBlock? 200 : 300;
+                int addLevel = newO2? 300 : 200;
                 byte[] image;
                 int level;
                 if (vol.compareTo(new BigDecimal(100)) < 0) {
@@ -335,7 +338,7 @@ public class GoGreenTree extends EpochDAPPjson {
                 treeAsset.setReference(ggTree.getReference(), ggTree.getDBref());
                 dcSet.getItemAssetMap().put(ggTreeKey, treeAsset);
 
-                if (O2_START_BLOCK < block.heightBlock) {
+                if (newO2) {
                     bonusKey = O2_ASSET_KEY;
                     bonusAmount = amount.divide(BigDecimal.TEN, 8, BigDecimal.ROUND_UP).multiply(BigDecimal.valueOf(level));
 
