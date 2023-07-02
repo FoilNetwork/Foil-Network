@@ -332,6 +332,7 @@ public class GoGreenTree extends EpochDAPPjson {
                     image = ("/dapps/gogreentree/tree_" + type + "_3.png").getBytes(StandardCharsets.UTF_8);
                 }
 
+                // обновим уровень и описание у дерева
                 AssetUnique treeAsset = new AssetUnique(ggTree.getAppData(),
                         stock, ggTree.getName(),
                         ggTree.getIcon(),
