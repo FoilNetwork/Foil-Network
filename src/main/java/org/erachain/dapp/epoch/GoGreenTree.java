@@ -36,7 +36,7 @@ public class GoGreenTree extends EpochDAPPjson {
     static public final String NAME = "GoGreenTree dApp";
     static public final String ASSET_NAME = "GGT";
     static public final long GO_GREEN_ASSET_KEY = BlockChain.TEST_MODE? 1048577L : 1048577L;
-    static public final long O2_ASSET_KEY = BlockChain.TEST_MODE? 1156L : 1048577L;
+    static public final long O2_ASSET_KEY = BlockChain.TEST_MODE? 1048578L : 1048578L;
     static public final int O2_START_BLOCK = BlockChain.TEST_MODE? 1 : 1048577;
     static public final BigDecimal MIN_VALUE = new BigDecimal("20");
 
