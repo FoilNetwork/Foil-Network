@@ -2,6 +2,7 @@ package org.erachain.dapp.epoch;
 
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
+import org.erachain.controller.Controller;
 import org.erachain.core.BlockChain;
 import org.erachain.core.account.Account;
 import org.erachain.core.account.PublicKeyAccount;
@@ -242,7 +243,8 @@ public class GoGreenTree extends EpochDAPPjson {
         Long refDB = commandTX.getDBRef();
         ItemAssetMap assetMap = dcSet.getItemAssetMap();
 
-        boolean newO2 = O2_START_BLOCK < block.heightBlock;
+        // для всех новых новый протокол
+        boolean newO2 = block == null || O2_START_BLOCK < block.heightBlock;
 
         Long bonusKey;
         BigDecimal bonusAmount;
