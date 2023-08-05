@@ -147,7 +147,7 @@ public class ShibaVerseDAPP extends EpochDAPPjson {
         }
 
         if (!dcSet.getSmartContractValues().contains(INIT_KEY)) {
-            fail("not initated yet");
+            fail("not initiated yet");
             return false;
         }
 
@@ -155,7 +155,7 @@ public class ShibaVerseDAPP extends EpochDAPPjson {
             gravitaKey = (Long) dcSet.getSmartContractValues().get(INIT_KEY);
 
         if (gravitaKey == null) {
-            fail("not initated yet");
+            fail("not initiated yet");
             return false;
         }
 
