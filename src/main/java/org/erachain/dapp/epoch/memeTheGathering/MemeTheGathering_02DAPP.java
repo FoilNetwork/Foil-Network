@@ -45,13 +45,13 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
     final static public Account adminAddress = new Account("7NhZBb8Ce1H2S2MkPerrMnKLZNf9ryNYtP");
 
     final static public String COMMAND_WITHDRAW = "withdraw";
-    final static public long BUSTER_1_KEY = BlockChain.DEMO_MODE ? 1048655L : 9999L;
+    final static public long BUSTER_1_KEY = BlockChain.TEST_MODE ? 1048655L : 9999L;
     final static public int BUSTER_1_SET_COUNT = 16;
-    final static public long BUSTER_2_KEY = BlockChain.DEMO_MODE ? 1048656L : 9999L;
+    final static public long BUSTER_2_KEY = BlockChain.TEST_MODE ? 1048656L : 9999L;
     final static public int BUSTER_2_SET_COUNT = 14;
-    final static public long SET_1_KEY = BlockChain.DEMO_MODE ? 1048657L : 9999L;
-    final static public long BUSTER_2_LAND_A_KEY = BlockChain.DEMO_MODE ? 1048671L : 9999L;
-    final static public long BUSTER_2_LAND_B_KEY = BlockChain.DEMO_MODE ? 1048672L : 9999L;
+    final static public long SET_1_KEY = BlockChain.TEST_MODE ? 1048657L : 9999L;
+    final static public long BUSTER_2_LAND_A_KEY = BlockChain.TEST_MODE ? 1048671L : 9999L;
+    final static public long BUSTER_2_LAND_B_KEY = BlockChain.TEST_MODE ? 1048672L : 9999L;
 
     /**
      * make random from future
@@ -281,17 +281,22 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
         if (true || // тут не градаций пока по редкости внутри бустреа
                 rareRes > 571) {
             rareLevel = RARE_COMMON;
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel, randomArray[index++]),
+            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
+                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
                     rareLevel, setName, busterName));
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel, randomArray[index++]),
+            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
+                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
                     rareLevel, setName, busterName));
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel, randomArray[index++]),
+            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
+                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
                     rareLevel, setName, busterName));
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel, randomArray[index++]),
+            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
+                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
                     rareLevel, setName, busterName));
         } else {
             rareLevel = RARE_UNCOMMON;
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel, randomArray[index++]),
+            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
+                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index++])),
                     rareLevel, setName, busterName));
         }
 
