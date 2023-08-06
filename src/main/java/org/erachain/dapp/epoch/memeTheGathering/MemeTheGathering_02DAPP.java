@@ -450,11 +450,18 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
     @Override
     public boolean processByTime(DCSet dcSet, Block block, Transaction transaction) {
 
-        if (COMMAND_RANDOM.equals(command)) {
-            return random(dcSet, block, (RSend) transaction, false);
+        try {
+            if (true || // any command or EMPTY
+                    COMMAND_RANDOM.equals(command)
+            ) {
+                return random(dcSet, block, (RSend) transaction, false);
+            } else
+                fail("unknown command");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            return false;
         }
 
-        fail("unknown command");
         return false;
 
     }
@@ -465,7 +472,12 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
 
     @Override
     public void orphanByTime(DCSet dcSet, Block block, Transaction transaction) {
-        if (COMMAND_RANDOM.equals(command)) {
+        if (status.startsWith("fail"))
+            return;
+
+        if (true || // any command or EMPTY
+                COMMAND_RANDOM.equals(command)
+        ) {
             random(dcSet, block, (RSend) transaction, true);
         }
 
