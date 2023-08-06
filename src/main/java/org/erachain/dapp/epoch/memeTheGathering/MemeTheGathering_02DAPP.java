@@ -32,7 +32,7 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
 
     final public static HashSet<PublicKeyAccount> accounts = new HashSet<>();
 
-    // APPBSN8XzUhdGpZKTvTGUuGLAt1qDcYEjo
+    // APPBx3R6LCJUGHgatrLFagBPhD9LdtTW58
     final public static PublicKeyAccount MAKER = PublicKeyAccount.makeForDApp(crypto.digest(Longs.toByteArray(ID)));
 
     static {
