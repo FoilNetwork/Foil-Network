@@ -73,15 +73,10 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
     }
 
     public static MemeTheGathering_02DAPP make(RSend txSend, String dataStr) {
-        // dataStr = null
-        if (dataStr == null || dataStr.isEmpty())
-            return null;
-
         return new MemeTheGathering_02DAPP(dataStr, "");
-
     }
 
-    /// PARSE / TOBYTES
+    /// PARSE / TO BYTES
 
     public static MemeTheGathering_02DAPP Parse(byte[] bytes, int pos, int forDeal) {
 
@@ -246,26 +241,21 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
      */
     private void openBuster_1_getPack(DCSet dcSet, Block block, RSend commandTX, int nonce, List actions, String busterName) {
 
-        // GET RANDOM
-        byte[] randomArray = getRandHash(block, commandTX, nonce);
-        int index = 0;
-        // 5,71% - Uncommon = 100% / 17,51
-        // see in TEST org.erachain.dapp.epoch.memeTheGathering.MemoCards_01DAPPTest.tt
-        int rareVal = Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index++]);
-        int rareRes = (int)((long)rareVal * 10000L / (long) (Short.MAX_VALUE * 2));
+        String setName = "whiteList";
+        int rareLevel = RARE_RARE;
 
-        String setName = "start!";
+        // по 2 карты из всего набора
+        for (int i=0; i<BUSTER_2_SET_COUNT; i++) {
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY+i, rareLevel, setName, busterName));
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY+i, rareLevel, setName, busterName));
+        }
 
-        int rareLevel;
-        if (true || // тут не градаций пока по редкости внутри бустреа
-                rareRes > 571) {
-            rareLevel = RARE_COMMON;
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_1_getBaseAssetKey(rareLevel, randomArray[index++]),
-                    rareLevel, setName, busterName));
-        } else {
-            rareLevel = RARE_UNCOMMON;
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_1_getBaseAssetKey(rareLevel, randomArray[index++]),
-                    rareLevel, setName, busterName));
+        // по 5 карт земель
+        for (int i=0; i<5; i++) {
+            // LAND A
+            actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_A_KEY, rareLevel, setName, busterName));
+            // LAND B
+            actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_B_KEY, rareLevel, setName, busterName));
         }
 
     }
@@ -459,7 +449,6 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
                 fail("unknown command");
         } catch (Exception e) {
             fail(e.getMessage());
-            return false;
         }
 
         return false;
