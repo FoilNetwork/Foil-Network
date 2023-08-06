@@ -250,7 +250,7 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
         byte[] randomArray = getRandHash(block, commandTX, nonce);
         int index = 0;
         // 5,71% - Uncommon = 100% / 17,51
-        // see in org.erachain.dapp.epoch.memeTheGathering.MemoCards_01DAPPTest.tt
+        // see in TEST org.erachain.dapp.epoch.memeTheGathering.MemoCards_01DAPPTest.tt
         int rareVal = Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index++]);
         int rareRes = (int)((long)rareVal * 10000L / (long) (Short.MAX_VALUE * 2));
 
@@ -417,7 +417,9 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
         if (commandTX instanceof RSend) {
             RSend rsend = (RSend) commandTX;
 
-            if (COMMAND_RANDOM.equals(command)) {
+            if (true || // any command or EMPTY
+                    COMMAND_RANDOM.equals(command)
+                    ) {
                 if (!rsend.hasAmount() || !rsend.hasPacket() && commandTX.getAmount().signum() <= 0) {
                     fail("Wrong amount. Need > 0");
                     return false;

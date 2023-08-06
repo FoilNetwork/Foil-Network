@@ -16,7 +16,7 @@ public class MemeTheGathering_01DAPPTest {
         while (ii-- > 0) {
             int rareVal = rand.nextInt(Short.MAX_VALUE * 2);
             int rareRes = (int)((long)rareVal * 10000L / (long) (Short.MAX_VALUE * 2));
-            if (rareRes < 571)
+            if (rareRes < 3333)
                 res++;
         }
         System.out.println( " res: " + res + " - " + (res * 100f / count) + "%");
