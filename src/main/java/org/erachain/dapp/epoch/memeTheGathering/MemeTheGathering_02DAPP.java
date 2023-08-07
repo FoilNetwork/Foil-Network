@@ -44,20 +44,13 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
      */
     final static public Account adminAddress = new Account("7NhZBb8Ce1H2S2MkPerrMnKLZNf9ryNYtP");
 
-    final static public String COMMAND_WITHDRAW = "withdraw";
     final static public long BUSTER_1_KEY = BlockChain.TEST_MODE ? 1048655L : 9999L;
-    final static public int BUSTER_1_SET_COUNT = 16;
     final static public long BUSTER_2_KEY = BlockChain.TEST_MODE ? 1048656L : 9999L;
     final static public int BUSTER_2_SET_COUNT = 14;
     final static public long SET_1_KEY = BlockChain.TEST_MODE ? 1048657L : 9999L;
+    final static public int SET_1_NO = 1;
     final static public long BUSTER_2_LAND_A_KEY = BlockChain.TEST_MODE ? 1048671L : 9999L;
     final static public long BUSTER_2_LAND_B_KEY = BlockChain.TEST_MODE ? 1048672L : 9999L;
-
-    /**
-     * make random from future
-     * Command only in lower case!
-     */
-    final static public String COMMAND_RANDOM = "random";
 
     public static final int RARE_COMMON = 0;
     public static final int RARE_UNCOMMON = 1;
@@ -128,27 +121,7 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
     }
 
     /// из какого числа карт выбираем в данном бустрере - номер бустреа уже знает свой Набор (Set)
-    /**
-     * count of items in that RARE Level
-     * @param rareLevel
-     * @return
-     */
-    public static Long openBuster_1_getBaseAssetKey(int rareLevel, int random) {
-        int totalSetItems;
-        switch (rareLevel) {
-            case RARE_COMMON:
-                totalSetItems = BUSTER_1_SET_COUNT;
-                break;
-            case RARE_UNCOMMON:
-            case RARE_RARE:
-            case RARE_EPIC:
-            default:
-                return null;
-        }
-        random = totalSetItems * random / (2 * Short.MAX_VALUE);
-        return SET_1_KEY + random;
-    }
-    public static Long openBuster_2_getBaseAssetKey(int rareLevel, int random) {
+    public static Integer openBuster_2_getBaseAssetKey(int rareLevel, int random) {
         int totalSetItems;
         switch (rareLevel) {
             case RARE_COMMON:
@@ -160,12 +133,81 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
             default:
                 return null;
         }
-        random = totalSetItems * random / (2 * Short.MAX_VALUE);
-        return SET_1_KEY + random;
+        return totalSetItems * random / (2 * Short.MAX_VALUE);
     }
 
     /**
-     * Make new MEMO CARD by BASE ASSEET KEY
+     * make pack by RARE
+     *
+     * @return
+     */
+    private void openBuster_1_getPack(DCSet dcSet, Block block, RSend commandTX, int nonce, List actions, String busterName) {
+
+        String setName = "whiteList";
+        int rareLevel = RARE_RARE;
+
+        // по 2 карты из всего набора
+        for (int i=0; i<BUSTER_2_SET_COUNT; i++) {
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY+i, rareLevel, setName, SET_1_NO, i, busterName));
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY+i, rareLevel, setName, SET_1_NO, i, busterName));
+        }
+
+        // по 5 карт земель
+        for (int i=0; i<5; i++) {
+            // LAND A
+            actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_A_KEY, rareLevel, setName, SET_1_NO, (int) (BUSTER_2_LAND_A_KEY - SET_1_KEY), busterName));
+            // LAND B
+            actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_B_KEY, rareLevel, setName, SET_1_NO, (int) (BUSTER_2_LAND_B_KEY - SET_1_KEY), busterName));
+        }
+
+    }
+
+    /**
+     * make pack by RARE
+     *
+     * @return
+     */
+    private void openBuster_2_getPack(DCSet dcSet, Block block, RSend commandTX, int nonce, List actions, String busterName) {
+
+        // GET RANDOM
+        byte[] randomArray = getRandHash(block, commandTX, nonce);
+        int index = 0;
+        // 5,71% - Uncommon = 100% / 17,51
+        // see in org.erachain.dapp.epoch.memeTheGathering.MemoCards_01DAPPTest.tt
+        int rareVal = Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index++]);
+        int rareRes = (int)((long)rareVal * 10000L / (long) (Short.MAX_VALUE * 2));
+
+        String setName = "Start!";
+
+        int rareLevel;
+        Integer cardNo;
+        if (true || // тут не градаций пока по редкости внутри бустреа
+                rareRes > 571) {
+            rareLevel = RARE_COMMON;
+            cardNo = openBuster_2_getBaseAssetKey(rareLevel, Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1]));
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY + cardNo, rareLevel, setName, SET_1_NO, cardNo, busterName));
+            cardNo = openBuster_2_getBaseAssetKey(rareLevel, Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1]));
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY + cardNo, rareLevel, setName, SET_1_NO, cardNo, busterName));
+            cardNo = openBuster_2_getBaseAssetKey(rareLevel, Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1]));
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY + cardNo, rareLevel, setName, SET_1_NO, cardNo, busterName));
+            cardNo = openBuster_2_getBaseAssetKey(rareLevel, Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1]));
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY + cardNo, rareLevel, setName, SET_1_NO, cardNo, busterName));
+
+        } else {
+            rareLevel = RARE_UNCOMMON;
+            cardNo = openBuster_2_getBaseAssetKey(rareLevel, Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1]));
+            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY + cardNo, rareLevel, setName, SET_1_NO, cardNo, busterName));
+        }
+
+        // LAND A
+        actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_A_KEY, rareLevel, setName, SET_1_NO, (int)(BUSTER_2_LAND_A_KEY - SET_1_KEY), busterName));
+        // LAND B
+        actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_B_KEY, rareLevel, setName, SET_1_NO, (int)(BUSTER_2_LAND_B_KEY - SET_1_KEY), busterName));
+
+    }
+
+    /**
+     * Make new MEMO CARD by BASE ASSET KEY
      * @param dcSet
      * @param block
      * @param commandTX
@@ -214,7 +256,7 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
     }
 
     private Long makeAsset(DCSet dcSet, Block block, RSend commandTX, Long assetBaseKey, int rareLevel,
-                           String setName, String busterName) {
+                           String setName, int setNo, int cardNo, String busterName) {
 
         if (assetBaseKey == null) {
             fail("makeAsset error 01");
@@ -227,85 +269,15 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
         JSONObject json = new JSONObject();
         json.put("rare", rareLevel);
         json.put("set", setName);
+        json.put("setNo", setNo);
+        json.put("no", cardNo + 1); // start from 1
         json.put("type", "card");
         json.put("buster", busterName);
-        String description = assetBase.getDescription() + "\n@" + json.toJSONString();
+        String description = assetBase.getDescription() + "\n\n@" + json.toJSONString();
         return makeAssetByBaseAssetKey(dcSet, block, commandTX, assetBaseKey, description, setName, busterName);
 
     }
 
-    /**
-     * make pack by RARE
-     *
-     * @return
-     */
-    private void openBuster_1_getPack(DCSet dcSet, Block block, RSend commandTX, int nonce, List actions, String busterName) {
-
-        String setName = "whiteList";
-        int rareLevel = RARE_RARE;
-
-        // по 2 карты из всего набора
-        for (int i=0; i<BUSTER_2_SET_COUNT; i++) {
-            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY+i, rareLevel, setName, busterName));
-            actions.add(makeAsset(dcSet, block, commandTX, SET_1_KEY+i, rareLevel, setName, busterName));
-        }
-
-        // по 5 карт земель
-        for (int i=0; i<5; i++) {
-            // LAND A
-            actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_A_KEY, rareLevel, setName, busterName));
-            // LAND B
-            actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_B_KEY, rareLevel, setName, busterName));
-        }
-
-    }
-
-    /**
-     * make pack by RARE
-     *
-     * @return
-     */
-    private void openBuster_2_getPack(DCSet dcSet, Block block, RSend commandTX, int nonce, List actions, String busterName) {
-
-        // GET RANDOM
-        byte[] randomArray = getRandHash(block, commandTX, nonce);
-        int index = 0;
-        // 5,71% - Uncommon = 100% / 17,51
-        // see in org.erachain.dapp.epoch.memeTheGathering.MemoCards_01DAPPTest.tt
-        int rareVal = Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index++]);
-        int rareRes = (int)((long)rareVal * 10000L / (long) (Short.MAX_VALUE * 2));
-
-        String setName = "start!";
-
-        int rareLevel;
-        if (true || // тут не градаций пока по редкости внутри бустреа
-                rareRes > 571) {
-            rareLevel = RARE_COMMON;
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
-                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
-                    rareLevel, setName, busterName));
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
-                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
-                    rareLevel, setName, busterName));
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
-                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
-                    rareLevel, setName, busterName));
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
-                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index-1])),
-                    rareLevel, setName, busterName));
-        } else {
-            rareLevel = RARE_UNCOMMON;
-            actions.add(makeAsset(dcSet, block, commandTX, openBuster_2_getBaseAssetKey(rareLevel,
-                            Ints.fromBytes((byte) 0, (byte) 0, randomArray[index++], randomArray[index++])),
-                    rareLevel, setName, busterName));
-        }
-
-        // LAND A
-        actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_A_KEY, rareLevel, setName, busterName));
-        // LAND B
-        actions.add(makeAsset(dcSet, block, commandTX, BUSTER_2_LAND_B_KEY, rareLevel, setName, busterName));
-
-    }
 
     /**
      * For that Buster and Amount it. Если номер актива не тот - ничего не сделает
@@ -402,39 +374,31 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
 
     }
 
-    private boolean random(DCSet dcSet, Block block, RSend commandTX, boolean asOrphan) {
-        return openBusters(dcSet, block, commandTX, asOrphan);
-    }
-
     @Override
     public boolean process(DCSet dcSet, Block block, Transaction commandTX) {
 
         if (commandTX instanceof RSend) {
             RSend rsend = (RSend) commandTX;
 
-            if (true || // any command or EMPTY
-                    COMMAND_RANDOM.equals(command)
-                    ) {
-                if (!rsend.hasAmount() || !rsend.hasPacket() && commandTX.getAmount().signum() <= 0) {
-                    fail("Wrong amount. Need > 0");
-                    return false;
-                } else if (rsend.isBackward()) {
-                    fail("Wrong direction - backward");
-                    return false;
-                } else if (rsend.balancePosition() != Account.BALANCE_POS_OWN) {
-                    fail("Wrong balance position. Need OWN[1]");
-                    return false;
-                } else if (block == null) {
-                    fail("null block");
-                    return false;
-                }
-
-                /// WAIT RANDOM FROM FUTURE
-                dcSet.getTimeTXWaitMap().put(commandTX.getDBRef(), block.heightBlock + WAIT_RAND);
-                status = "wait";
+            if (!rsend.hasAmount() || !rsend.hasPacket() && commandTX.getAmount().signum() <= 0) {
+                fail("Wrong amount. Need > 0");
                 return false;
-
+            } else if (rsend.isBackward()) {
+                fail("Wrong direction - backward");
+                return false;
+            } else if (rsend.balancePosition() != Account.BALANCE_POS_OWN) {
+                fail("Wrong balance position. Need OWN[1]");
+                return false;
+            } else if (block == null) {
+                fail("null block");
+                return false;
             }
+
+            /// WAIT RANDOM FROM FUTURE
+            dcSet.getTimeTXWaitMap().put(commandTX.getDBRef(), block.heightBlock + WAIT_RAND);
+            status = "wait";
+            return false;
+
         }
 
         fail("unknown command");
@@ -446,12 +410,7 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
     public boolean processByTime(DCSet dcSet, Block block, Transaction transaction) {
 
         try {
-            if (true || // any command or EMPTY
-                    COMMAND_RANDOM.equals(command)
-            ) {
-                return random(dcSet, block, (RSend) transaction, false);
-            } else
-                fail("unknown command");
+            return openBusters(dcSet, block, (RSend) transaction, false);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -469,11 +428,7 @@ public class MemeTheGathering_02DAPP extends EpochDAPPjson {
         if (status.startsWith("fail"))
             return;
 
-        if (true || // any command or EMPTY
-                COMMAND_RANDOM.equals(command)
-        ) {
-            random(dcSet, block, (RSend) transaction, true);
-        }
+        openBusters(dcSet, block, (RSend) transaction, true);
 
     }
 
