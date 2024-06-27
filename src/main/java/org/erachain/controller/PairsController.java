@@ -17,6 +17,7 @@ import org.erachain.datachain.OrderMapImpl;
 import org.erachain.datachain.TradeMapImpl;
 import org.erachain.dbs.IteratorCloseable;
 import org.erachain.settings.Settings;
+import org.erachain.utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -246,20 +247,38 @@ public class PairsController {
      */
     public static TradePair reCalcAndUpdate(AssetCls asset1, AssetCls asset2, PairMap pairMap, int cacheTimeMin) {
 
-        TradePair tradePairOld = pairMap.get(asset1.getKey(), asset2.getKey());
-        if (tradePairOld != null && System.currentTimeMillis() - tradePairOld.updateTime < cacheTimeMin * 60000) {
-            return tradePairOld;
-        }
+        try {
+            TradePair tradePairOld = pairMap.get(asset1.getKey(), asset2.getKey());
+            if (tradePairOld != null && System.currentTimeMillis() - tradePairOld.updateTime < cacheTimeMin * 60000) {
+                return tradePairOld;
+            }
 
-        TradePair tradePair = reCalc(asset1, asset2, tradePairOld);
-        if (tradePair.equals(tradePairOld)) {
-            if (tradePair.updateTime != tradePairOld.updateTime) {
+            TradePair tradePair = reCalc(asset1, asset2, tradePairOld);
+            if (tradePair.equals(tradePairOld)) {
+                if (tradePair.updateTime != tradePairOld.updateTime) {
+                    pairMap.put(tradePair);
+                }
+            } else {
                 pairMap.put(tradePair);
             }
-        } else {
-            pairMap.put(tradePair);
+            return tradePair;
+
+        } catch (Exception e) {
+            // битая база - надо ее удалить
+            DLSet.reCreateDB();
+            Controller.getInstance().dlSet.close();
+            try {
+                File dbFile = new File(Settings.getInstance().getLocalDir(), "data.dat");
+                java.nio.file.Files.walkFileTree(dbFile.getParentFile().toPath(),
+                        new SimpleFileVisitorForRecursiveFolderDeletion());
+            } catch (Throwable e1) {
+                LOGGER.error(e1.getMessage(), e1);
+            }
+
+            Controller.getInstance().dlSet = DLSet.reCreateDB();
+
+            return null;
         }
-        return tradePair;
     }
 
     public static void foundPairs(DCSet dcSet, DLSet dlSet, int days) {

@@ -9,12 +9,10 @@ import org.erachain.core.account.PublicKeyAccount;
 import org.erachain.core.block.Block;
 import org.erachain.core.crypto.Crypto;
 import org.erachain.core.transaction.Transaction;
-import org.erachain.dapp.epoch.DogePlanet;
-import org.erachain.dapp.epoch.LeafFall;
-import org.erachain.dapp.epoch.Refi;
-import org.erachain.dapp.epoch.Voucher;
+import org.erachain.dapp.epoch.*;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGathering_01DAPP;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGatheringDAPP;
+import org.erachain.dapp.epoch.memeTheGathering.MemeTheGathering_02DAPP;
 import org.erachain.dapp.epoch.shibaverse.ShibaVerseDAPP;
 import org.erachain.datachain.DCSet;
 import org.erachain.lang.Lang;
@@ -180,10 +178,14 @@ public abstract class DAPP {
                 return MemeTheGatheringDAPP.Parse(data, position, forDeal);
             case MemeTheGathering_01DAPP.ID:
                 return MemeTheGathering_01DAPP.Parse(data, position, forDeal);
+            case MemeTheGathering_02DAPP.ID:
+                return MemeTheGathering_02DAPP.Parse(data, position, forDeal);
             case Refi.ID:
                 return Refi.Parse(data, position, forDeal);
             case Voucher.ID:
                 return Voucher.Parse(data, position, forDeal);
+            case GoGreenTree.ID:
+                return GoGreenTree.Parse(data, position, forDeal);
         }
 
         throw new Exception("wrong smart-contract id:" + id);
