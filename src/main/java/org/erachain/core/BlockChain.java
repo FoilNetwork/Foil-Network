@@ -734,7 +734,7 @@ public class BlockChain {
     }
 
     public static int GENERATING_MIN_BLOCK_TIME(int height) {
-        return BLOCKS_PERIOD;
+        return !TEST_MODE? BLOCKS_PERIOD : 5;
     }
 
     public static boolean isWiped(byte[] signature) {

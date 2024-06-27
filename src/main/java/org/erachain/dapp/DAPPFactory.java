@@ -10,12 +10,10 @@ import org.erachain.core.transaction.CreateOrderTransaction;
 import org.erachain.core.transaction.RSend;
 import org.erachain.core.transaction.Transaction;
 import org.erachain.core.transaction.TransactionAmount;
-import org.erachain.dapp.epoch.DogePlanet;
-import org.erachain.dapp.epoch.LeafFall;
-import org.erachain.dapp.epoch.Refi;
-import org.erachain.dapp.epoch.Voucher;
+import org.erachain.dapp.epoch.*;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGathering_01DAPP;
 import org.erachain.dapp.epoch.memeTheGathering.MemeTheGatheringDAPP;
+import org.erachain.dapp.epoch.memeTheGathering.MemeTheGathering_02DAPP;
 import org.erachain.dapp.epoch.shibaverse.ShibaVerseDAPP;
 import org.erachain.utils.FileUtils;
 import org.json.simple.JSONObject;
@@ -42,8 +40,10 @@ public abstract class DAPPFactory {
         ShibaVerseDAPP.setDAPPFactory(stocks);
         MemeTheGatheringDAPP.setDAPPFactory(stocks);
         MemeTheGathering_01DAPP.setDAPPFactory(stocks);
+        MemeTheGathering_02DAPP.setDAPPFactory(stocks);
         Refi.setDAPPFactory(stocks);
         Voucher.setDAPPFactory(stocks);
+        GoGreenTree.setDAPPFactory(stocks);
 
     }
 
@@ -132,8 +132,12 @@ public abstract class DAPPFactory {
                 return MemeTheGatheringDAPP.make(txSend, dataStr);
             case MemeTheGathering_01DAPP.ID:
                 return MemeTheGathering_01DAPP.make(txSend, dataStr);
+            case MemeTheGathering_02DAPP.ID:
+                return MemeTheGathering_02DAPP.make(txSend, dataStr);
             case Voucher.ID:
                 return Voucher.make(txSend, dataStr);
+            case GoGreenTree.ID:
+                return GoGreenTree.make(txSend, dataStr);
         }
 
         return null;
@@ -156,10 +160,14 @@ public abstract class DAPPFactory {
                 return MemeTheGatheringDAPP.NAME;
             case MemeTheGathering_01DAPP.ID:
                 return MemeTheGathering_01DAPP.NAME;
+            case MemeTheGathering_02DAPP.ID:
+                return MemeTheGathering_02DAPP.NAME;
             case Refi.ID:
                 return Refi.NAME;
             case Voucher.ID:
                 return Voucher.NAME;
+            case GoGreenTree.ID:
+                return GoGreenTree.NAME;
         }
 
         return null;
